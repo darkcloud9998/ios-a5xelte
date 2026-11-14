@@ -467,3 +467,18 @@ actions = ["read-analysis", "docs-write", "local-commit"]
 evidence = ["E-0047"]
 acceptance = "Hecho: docs/S7GE_MIN2_ANALYSIS.md (tabla de bloques de start.s; NO XNU ON no existe; qué se puede y no concluir; opciones P-T). NO hecho: ninguna escritura ni lectura del teléfono; no se construyó min3 (sin datos)."
 
+
+[[task]]
+id = "T-0042"
+title = "Leer desde TWRP (solo lectura) el marcador de RAM de start.s para saber si hubo reinicio/reentrada"
+status = "ready"
+priority = 9
+owner = "ingeniero"
+depends_on = []
+actions = ["device-read"]
+acceptance = "Resultado archivado con hash fuera de git; sin escritura en el teléfono; si /dev/mem no existe se informa al Director antes de usar otro método."
+evidence = []
+min_evidence = { level = "L2", device = "this-unit" }
+requires_decisions = ["D-0038"]
+authorization_ref = "D-0038"
+resume = "D-0038 cubre solo lectura de RAM alrededor de 0x8ffff100 (máx. 1 MiB). TWRP no tiene /dev/mem; /proc/last_kmsg existe. Preguntar al Director antes de crear /dev/mem con mknod."

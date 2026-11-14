@@ -8,7 +8,13 @@ Los informes para el jefe técnico (ChatGPT) usan el mismo formato: se le entreg
 
 ---
 
-## Relevo vigente: H-0029 — tanda D-0041 (imagen 1/8: min7h08, herostop=8) ESCRITA; teléfono en TWRP, SIN reiniciar (2026-11-14)
+## Relevo vigente: H-0030 — min7h08 CONGELÓ: el reinicio es posterior a la marca 6c (2026-11-14)
+- **Tarea en curso: T-0012** (autorización vigente D-0041, 1 de 8 escrituras usada).
+- **Observación (E-0067):** tras `adb reboot`, pantalla congelada con texto de las marcas 1-6c y la columna derecha de 12 bloques tal como se predijo. El kernel llega a `arm_init` hasta 6c; **el reinicio ocurre después**. El teléfono sigue encendido y congelado: hay que forzar el apagado.
+- **Siguiente:** el Director entra en TWRP (Vol− + Power ~7 s para apagar/reiniciar y, al arrancar, Vol+ + Home + Power) y avisa; el ingeniero escribe **h16** (`xnu-boot-v2-s7-min7h16-20261114.img`, sha256 en E-0065, ya registrado) y se repite. Orden y plan: `docs/S7GE_HEROSTOP_BISECT.md`.
+- Restaurar BOOT original (E-0009) cubierto por D-0041.
+
+## Relevo anterior: H-0029 — tanda D-0041 (imagen 1/8: min7h08, herostop=8) ESCRITA; teléfono en TWRP, SIN reiniciar (2026-11-14)
 - **Tarea en curso: T-0012** (autorización vigente D-0041).
 - **Hecho:** kernel CI 43603366417 (0338-0342, sha256 `4e5f25a5…4d6f`), imagen `xnu-boot-v2-s7-min7h08-20261114.img` (sha256 `0bb5e7a6…a37ff`), leída de vuelta; EFS intacto (E-0059, E-0060). Quedan 7 imágenes de la tanda.
 - **Canal de RAM:** `/dev/mem` imposible (TWRP sin CONFIG_DEVMEM); el contador de 0342 no se puede leer desde TWRP. Alternativa pendiente de pensar (no hecha): breadcrumbs dentro de una región que TWRP exponga.

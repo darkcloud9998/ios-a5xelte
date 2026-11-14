@@ -29,3 +29,8 @@ Los bloques tienen **colores repetidos**; se cuentan por posición (y). El hueco
 2. Tras h12 congelada → **h16**, luego **h19**; si h19 también congela, el reinicio es **después** de apagar TTBR0: siguiente paso = marcas tras `serial_init` (kernel nuevo).
 3. Tras h04 no congelada → **h02**; tras h04 congelada → **h06**.
 Imágenes ya construidas y verificadas (E-0061…E-0066): h02, h04, h06, h12, h16, h19. La tanda permite 8 escrituras: h08 + 7.
+
+## Resultado de h08 (E-0067, 2026-11-14)
+**Congeló** con el texto de las marcas 1-6c y la columna derecha exactamente como se predijo (0-8, hueco del 9, 10-12). El kernel ejecuta `arm_init` **hasta la marca 6c** y la parada funciona: **el reinicio es POSTERIOR a la marca 6c.** Esto valida el método y cierra las preguntas anteriores (el texto sí se imprime; antes solo era fugaz).
+Consecuencia: h02, h04, h06 y h12 **ya no aportan nada** (esos puntos se han pasado). Quedan, en **orden de ejecución**: `9` (tras la marca 7) → `13` (inicio de `arm_vm_init`) → `14` → `15` → `16` → `17` → `18` → `19` (justo antes de apagar TTBR0). 8 posibilidades ⇒ 3 escrituras bastan: **h16** primero; si congela → **h18** (luego 17 o 19); si no → **h14** (luego 13 o 15, y 9).
+Imágenes listas y verificadas: h09, h13, h14, h15, h16, h17, h18, h19 (E-0068…E-0073 y E-0063…E-0066).

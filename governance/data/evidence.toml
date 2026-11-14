@@ -1209,3 +1209,18 @@ sha256 = "e9b68077dd2a7ef47f90480f2470de90b597c342aa60b450221d0b58c55d651a"
 size = 724
 immutable = true
 note = "Solo escritura y lectura de vuelta (D-0041; hash registrado antes en E-0066). Difiere de min7 solo en herostop=19 (diff comprobado)."
+
+[[evidence]]
+id = "E-0082"
+title = "Observación de min7h19 (Director): congela con un bloque blanco nuevo al final de la columna (slot 19): el kernel llega justo antes de apagar TTBR0; el reinicio es posterior a set_mmu_ttb(invalid_ttep)"
+kind = "observation"
+path = "/home/pioxi/HackiOS/builds/device-day/phase1-20261114/min7h19-observation.txt"
+location = "host"
+created = "2026-11-14"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "855418756a6a6dd04d626a62a71d9ef88d2c8333ff87256041d7e2cb4519738e"
+size = 299
+immutable = true
+note = "Sin texto nuevo (las marcas de texto de etapa >7 no se dibujan en la variante A5). Sin vídeo. Fin de la bisección con alias físico del framebuffer: lo que sigue exige dibujar a través de un alias virtual (0343)."

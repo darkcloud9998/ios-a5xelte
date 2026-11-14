@@ -8,7 +8,13 @@ Los informes para el jefe técnico (ChatGPT) usan el mismo formato: se le entreg
 
 ---
 
-## Relevo vigente: H-0037 — h19 ESCRITA (5/8 de la tanda D-0041); teléfono en TWRP, sin reiniciar (2026-11-14)
+## Relevo vigente: H-0038 — h19 CONGELÓ: el reinicio es posterior a apagar TTBR0; kernel nuevo en preparación (2026-11-14)
+- **Tarea en curso: T-0012** (D-0041, 5/8 usadas, pero el siguiente paso exige un kernel nuevo y por tanto una decisión nueva). Observación E-0082.
+- **Hecho:** parche 0343 (alias virtual del framebuffer tras TTBR0 + bloques 20-27) escrito, aplica sobre 0338-0342; a publicar en `mio` y compilar en CI (D-0030).
+- **Siguiente:** CI → construir imagen (sin herostop y variantes) → pedir al Director autorización con hash del kernel nuevo (D-0041 no lo cubre).
+- **El teléfono:** el Director vuelve a TWRP. BOOT = h19. Restaurar BOOT original (E-0009) cubierto por D-0041.
+
+## Relevo anterior: H-0037 — h19 ESCRITA (5/8 de la tanda D-0041); teléfono en TWRP, sin reiniciar (2026-11-14)
 - **Tarea en curso: T-0012.** h18 congeló con el bloque 18 visible (E-0079 + aclaración E-0080): `set_mmu_ttb_alternate` se supera. BOOT = `xnu-boot-v2-s7-min7h19-20261114.img` (sha256 `fd1ec365…22a1`), leída de vuelta; EFS intacto (E-0081). Quedan 3 escrituras.
 - **Siguiente (Director):** `adb reboot`, mirar, **contar los bloques y decir el color de los dos últimos**. **Congela** con un bloque nuevo (blanco, slot 19) ⇒ el reinicio es posterior a apagar TTBR0 (hace falta kernel nuevo). **No congela** (azul/cian/magenta + XNU MMU ON) ⇒ el reinicio está entre los bloques 18 y 19.
 - Restaurar BOOT original (E-0009) cubierto por D-0041.

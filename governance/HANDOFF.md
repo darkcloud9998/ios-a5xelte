@@ -10,7 +10,7 @@ Los informes para el jefe técnico (ChatGPT) usan el mismo formato: se le entreg
 
 ## Relevo vigente: H-0032 — h16 CONGELÓ: el reinicio es posterior al bloque 16 (antes de arm_vm_physmap_init) (2026-11-14)
 - **Tarea en curso: T-0012** (D-0041, 2/8 usadas). Observación E-0075: texto hasta `rb: physmap_init`, 17 bloques, hueco del 14 esperado (`#if ARM_LARGE_MEMORY` no compilado).
-- **Siguiente:** el Director fuerza el apagado (Vol− + Power ~7 s), entra en TWRP (Vol+ + Home + Power) y avisa; el ingeniero escribe **h17** (sha256 en E-0071 de la serie preparada; ya registrado). Si h17 **no** congela ⇒ el reinicio está dentro de `arm_vm_physmap_init`.
+- **Siguiente:** el Director fuerza el apagado (Vol− + Power ~7 s), entra en TWRP (Vol+ + Home + Power) y avisa; el ingeniero escribe **h17** (sha256 en E-0072; ya registrado). Si h17 **no** congela ⇒ el reinicio está dentro de `arm_vm_physmap_init`.
 - Restaurar BOOT original (E-0009) cubierto por D-0041.
 
 ## Relevo anterior: H-0031 — h16 ESCRITA (2/8 de la tanda D-0041); teléfono en TWRP, sin reiniciar (2026-11-14)

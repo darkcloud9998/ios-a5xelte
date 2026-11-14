@@ -1134,3 +1134,18 @@ sha256 = "db9ff68a2ba1472eeab3a876bb3a8b4d7a1af81c9f029fec1a31142cb2e207aa"
 size = 724
 immutable = true
 note = "Solo escritura y lectura de vuelta (D-0041; hash registrado antes en E-0072). Difiere de min7 solo en herostop=17 (diff comprobado)."
+
+[[evidence]]
+id = "E-0077"
+title = "Observación de min7h17 (Director): congela con las líneas nuevas 'rb: extra banks' y 'rb: extra banks mapped' y un bloque nuevo (cian/turquesa oscuro) al final de la columna: arm_vm_physmap_init TERMINA; el reinicio es posterior al bloque 17"
+kind = "observation"
+path = "/home/pioxi/HackiOS/builds/device-day/phase1-20261114/min7h17-observation.txt"
+location = "host"
+created = "2026-11-14"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "2f59c156cb13a26200f73bd138f3dc941b7e0a2d87258d9a436da6b00f0f96e9"
+size = 370
+immutable = true
+note = "Coincide con lo predicho (marcas de texto dentro de arm_vm_physmap_init + slot 17 turquesa oscuro). Sin vídeo."

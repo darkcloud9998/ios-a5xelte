@@ -8,7 +8,13 @@ Los informes para el jefe técnico (ChatGPT) usan el mismo formato: se le entreg
 
 ---
 
-## Relevo vigente: H-0033 — h17 ESCRITA (3/8 de la tanda D-0041); teléfono en TWRP, sin reiniciar (2026-11-14)
+## Relevo vigente: H-0034 — h17 CONGELÓ: arm_vm_physmap_init termina; el reinicio es posterior al bloque 17 (2026-11-14)
+- **Tarea en curso: T-0012** (D-0041, 3/8 usadas). Observación E-0077.
+- **Siguiente:** el Director fuerza el apagado (Vol− + Power ~7 s), entra en TWRP y avisa; el ingeniero escribe **h18** (sha256 en las evidencias de la serie preparada, E-0073). Si h18 **no** congela ⇒ el reinicio está en `set_mmu_ttb_alternate` (cambio de TTBR1 a la tabla final); si congela ⇒ h19.
+- Idea en estudio para ir más rápido (no hecha): parche 0343 con pausas temporizadas en vez de congelar (`heropause`), para ver varias etapas en un solo arranque.
+- Restaurar BOOT original (E-0009) cubierto por D-0041.
+
+## Relevo anterior: H-0033 — h17 ESCRITA (3/8 de la tanda D-0041); teléfono en TWRP, sin reiniciar (2026-11-14)
 - **Tarea en curso: T-0012.** BOOT = `xnu-boot-v2-s7-min7h17-20261114.img` (sha256 `5bf549f0…1ee0`), leída de vuelta; EFS intacto (E-0076). Quedan 5 escrituras.
 - **Siguiente (Director):** `adb reboot`, mirar. **Congela** con texto hasta `rb: physmap_init` **más** `7: rb: extra banks` / `rb: extra banks mapped` (marcas de dentro de `arm_vm_physmap_init`) y el bloque 17 (turquesa oscuro) ⇒ el reinicio es posterior (siguiente h18). **No congela** (azul/cian/magenta + XNU MMU ON) ⇒ el reinicio está **dentro de `arm_vm_physmap_init`**.
 - Restaurar BOOT original (E-0009) cubierto por D-0041.

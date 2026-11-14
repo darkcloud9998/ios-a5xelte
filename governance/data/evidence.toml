@@ -759,3 +759,18 @@ sha256 = "d98bc2859d75f47f7d26982e4d9efa3589f5775ea5dbbaf029e12ae9568cfdd7"
 size = 721
 immutable = true
 note = "Solo escritura y lectura de vuelta (D-0036). El hash de EFS de esta sesión difiere del de la anterior porque el superbloque vivo cambia entre sesiones de TWRP; el script comprobó que no cambió dentro de la sesión. El teléfono sigue en TWRP, sin reiniciar."
+
+[[evidence]]
+id = "E-0052"
+title = "Candidata min5: kernel con los parches 0338 y 0339 (CI 43596777961) + ADT de 2 GiB + línea de arranque de min2; 47 PASS constructor y 57 PASS independiente, 0 FAIL"
+kind = "image"
+path = "~/HackiOS/builds/device-day/boot-candidates-n2-run6-min5/xnu-boot-v2-s7-min5-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "4cb134c25ba32ddbf478ddb172d259656c3e2f624e1faf778c96d9dd86293bd5"
+size = 18618384
+immutable = true
+note = "Kernel 6693c690...5317fe (run 43596777961, rama herolte-drop-v2 en 842a4e5; ci_check: 0339 APLICADO). ADT dc817436... y cmdline.txt idénticos a min2/min4. Cambia solo el kernel respecto a min4. NO escrita en el teléfono: exige autorización roja nueva con este hash."

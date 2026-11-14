@@ -834,3 +834,18 @@ sha256 = "81cd51c39456233b999f0bc98866f8e221430e4f47617c8c6bda5400219c261d"
 size = 721
 immutable = true
 note = "Solo escritura y lectura de vuelta (D-0039). El teléfono sigue en TWRP, sin reiniciar."
+
+[[evidence]]
+id = "E-0057"
+title = "Observación de min6 (Director): entre el texto del cargador y 'azul, cian, magenta + XNU MMU ON' no apareció nada (ni columna derecha ni texto de etapas)"
+kind = "observation"
+path = "/home/pioxi/HackiOS/builds/device-day/phase1-20261114/min6-observation.txt"
+location = "host"
+created = "2026-11-14"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "7ca2b18178b637c623565acb2d9e490064820c9e03595c966368b3f7acfa63c2"
+size = 250
+immutable = true
+note = "Transcripción literal del Director, sin vídeo archivado. Contradice min5 (donde sí se vieron texto de etapas y 7 bloques): puede ser un fallo de observación (fugaz) o una regresión de 0340; no se distingue sin vídeo o sin congelar la pantalla."

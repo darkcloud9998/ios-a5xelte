@@ -1374,3 +1374,18 @@ sha256 = "da2b1e9bfe6d68044282998899aaad7d6b42e3b680423da86db8eb71b4535ced"
 size = 724
 immutable = true
 note = "Solo escritura y lectura de vuelta (D-0042; hash registrado antes, evidencia de la serie preparada). Difiere de min8 solo en herostop=23 (diff comprobado)."
+
+[[evidence]]
+id = "E-0093"
+title = "Observación de min8h23 (Director): pánico visible 'A5 XNU PANIC: arm_vm_init.c:1878 Assertion failed: (l1 & (ARM_TTE_VALID | ARM_TTE_TYPE_MASK)) == (ARM_TTE_VALID | ARM_TTE_TYPE_TABLE)'; los bloques llegan al 15 y faltan las 3 últimas líneas 'rb:'"
+kind = "observation"
+path = "/home/pioxi/HackiOS/builds/device-day/phase1-20261114/min8h23-observation.txt"
+location = "host"
+created = "2026-11-14"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "080f2052d37c350ea9c308215f273258fd35167b752ef20b56ca428f9400ff0b"
+size = 455
+immutable = true
+note = "La aserción es la de a5_early_map_final() (parche 0343, mío): no hay entrada L1 en VM_MIN_KERNEL_ADDRESS sin ARM_LARGE_MEMORY. Es un fallo de mi diagnóstico, NO el reinicio que se busca. Lo que faltaba coincide con el orden de ejecución (la función se llama antes de 'rb: physmap_init'). Útil: el pánico temprano SE DIBUJA. Sin vídeo."

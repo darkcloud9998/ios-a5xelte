@@ -8,7 +8,12 @@ Los informes para el jefe técnico (ChatGPT) usan el mismo formato: se le entreg
 
 ---
 
-## Relevo vigente: H-0040 — tanda D-0042 (kernel 0343), imagen 1/8: h23 ESCRITA; teléfono en TWRP, sin reiniciar (2026-11-14)
+## Relevo vigente: H-0041 — h23 (kernel 0343) PANICÓ por un fallo de mi parche; corrección 0344 en CI (2026-11-14)
+- **Tarea en curso: T-0012** (D-0042: 1/8 usada, pero el kernel va a cambiar). E-0093: `A5 XNU PANIC: arm_vm_init.c:1878 Assertion failed (l1 …TYPE_TABLE)` en `a5_early_map_final()`: falta la entrada L1 de `VM_MIN_KERNEL_ADDRESS`.
+- **Hecho:** parche 0344 (`init_ptpages` antes de leer el L1) escrito, aplica; publicado en `mio` y CI lanzado. **Siguiente:** CI → descargar → construir h20…h27 con el kernel nuevo → pedir tanda nueva (D-0043) con su hash.
+- **El teléfono** está en TWRP con h23 (kernel 0343, panica pronto: no sirve para más pruebas). Restaurar BOOT original (E-0009) cubierto por D-0042.
+
+## Relevo anterior: H-0040 — tanda D-0042 (kernel 0343), imagen 1/8: h23 ESCRITA; teléfono en TWRP, sin reiniciar (2026-11-14)
 - **Tarea en curso: T-0012.** BOOT = `xnu-boot-v2-s7-min8h23-20261114.img` (sha256 `493f8478…a8aa`), leída de vuelta; EFS intacto (E-0092). Quedan 7 escrituras.
 - **Siguiente (Director):** `adb reboot`, mirar; contar los bloques de la columna derecha y decir el color de los últimos. Esperado: hasta el bloque 19 como h19, **más** los bloques 20 (naranja-rojo), 21 (oro), 22 (rosa), 23 (verde lima) si el kernel llega a 23 y se congela. **Si sigue en 19 y no hay más** ⇒ el alias virtual no funciona o el reinicio es anterior a 23: siguiente h20. **Si no congela** (azul/cian/magenta + XNU MMU ON): igual, h20/h21.
 - Restaurar BOOT original (E-0009) cubierto por D-0042.

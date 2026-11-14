@@ -8,7 +8,12 @@ Los informes para el jefe técnico (ChatGPT) usan el mismo formato: se le entreg
 
 ---
 
-## Relevo vigente: H-0042 — autorización amplia de diagnóstico D-0043 registrada; CI de 0344 en curso (2026-11-14)
+## Relevo vigente: H-0043 — min9h23 (kernel 0344, D-0043, 1/20) ESCRITA; teléfono en TWRP, sin reiniciar (2026-11-14)
+- **Tarea en curso: T-0012.** BOOT = `xnu-boot-v2-s7-min9h23-20261114.img` (sha256 `4b0d8fd5…d8ed`); EFS intacto (E-0104). Revisión del kernel: E-0094; imágenes preparadas: E-0095…E-0103 (min9 sin herostop y h20…h27).
+- **Siguiente (Director):** `adb reboot`, mirar la columna derecha: tras los 19 bloques de siempre, **20 naranja-rojo, 21 oro, 22 rosa, 23 verde** y la pantalla congelada. Si no hay bloques nuevos tras el 19: h20. Si hay un `A5 XNU PANIC`: transcribir archivo, línea y condición literales.
+- Restaurar BOOT original (E-0009) cubierto por D-0043.
+
+## Relevo anterior: H-0042 — autorización amplia de diagnóstico D-0043 registrada; CI de 0344 en curso (2026-11-14)
 - **Tarea en curso: T-0012.** D-0043 (hasta 20 escrituras, hasta 2026-11-16): kernels del CI de `herolte-drop-v2` con 0332-0337 intactos y parches posteriores que pasen `tools/herolte-diag-patch-check.py` y estén revisados y registrados (evidencia con run, hash y qué hace cada cambio); mismo ADT y cargador; línea de min2 + `herostop=N`; 47/57 PASS; hashes registrados antes de escribir.
 - **Ahora:** CI 43613119407 (0344) → cuando termine: ci_check, revisar el contenido de 0343+0344 (solo dibujo; ya hecho al escribirlos, registrar), construir h20…h27, escribir **h23** y continuar.
 - El teléfono está en TWRP con h23 del kernel 0343 (que panica por mi fallo). Restaurar BOOT original (E-0009) cubierto por D-0043.

@@ -1539,3 +1539,18 @@ sha256 = "2d19973ebefaea12c8e96c346e1d56bf745c1cd343a2094a1f051184c60e97fe"
 size = 18618384
 immutable = true
 note = "Kernel 1a8699a79751c6073d06da908ceb13f80ca938facb27aa5c6a9af4f9cda60983 (revisión E-0094), ADT dc817436… y cargador 0a68abbd… como min2-min8. La línea de arranque difiere de min2 solo en herostop (comprobado)."
+
+[[evidence]]
+id = "E-0104"
+title = "Tanda amplia D-0043, imagen 1: BOOT del S7 escrito con xnu-boot-v2-s7-min9h23-20261114.img (kernel 0344) y leído de vuelta (sha256 4b0d8fd5…d8ed); EFS idéntico antes y después de la sesión"
+kind = "result"
+path = "/home/pioxi/HackiOS/builds/device-day/phase1-20261114/flash-min9h23-out.txt"
+location = "host"
+created = "2026-11-14"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "81c90069fc6b85df45a0610321cdbeb053b264614c2c23ce38142df442729354"
+size = 725
+immutable = true
+note = "Solo escritura y lectura de vuelta. El primer intento se cortó antes de escribir porque adb dejó de ver el teléfono (reenumeración USB); se repitió con TWRP visible y el script volvió a comprobar todo. Condiciones de D-0043 cumplidas antes de escribir: revisión E-0094, hashes en evidencias, cmdline = min2 + herostop=23 (diff)."

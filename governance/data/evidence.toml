@@ -1554,3 +1554,33 @@ sha256 = "81c90069fc6b85df45a0610321cdbeb053b264614c2c23ce38142df442729354"
 size = 725
 immutable = true
 note = "Solo escritura y lectura de vuelta. El primer intento se cortó antes de escribir porque adb dejó de ver el teléfono (reenumeración USB); se repitió con TWRP visible y el script volvió a comprobar todo. Condiciones de D-0043 cumplidas antes de escribir: revisión E-0094, hashes en evidencias, cmdline = min2 + herostop=23 (diff)."
+
+[[evidence]]
+id = "E-0105"
+title = "Observación de min9h23 (Director): mismo estado que h19: texto hasta los 4 'rb:' y bloques hasta cian, marrón, blanco (17-19); sin pánico y sin bloques 20-23"
+kind = "observation"
+path = "/home/pioxi/HackiOS/builds/device-day/phase1-20261114/min9h23-observation.txt"
+location = "host"
+created = "2026-11-14"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "abf60d6cf3dcb08a240ca957f02fc5cd983acb7184079334c310269466f97113"
+size = 364
+immutable = true
+note = "La aserción de 0343 ya no salta (0344 funciona hasta el bloque 19). Dos lecturas, sin distinguir: (a) el kernel se queda colgado entre el bloque 19 y el 20 (cambio de TTBR0, flush o el primer dibujo por el alias), o (b) llega a herostop=23 pero el dibujo por el alias virtual no se ve. La pantalla NO muestra el estado de reinicio de min2-min7."
+
+[[evidence]]
+id = "E-0106"
+title = "Tanda amplia D-0043, imagen 2: BOOT del S7 escrito con xnu-boot-v2-s7-min9-20261114.img (kernel 0344, sin herostop) y leído de vuelta (sha256 501b889e…409e); EFS idéntico antes y después de la sesión"
+kind = "result"
+path = "/home/pioxi/HackiOS/builds/device-day/phase1-20261114/flash-min9-out.txt"
+location = "host"
+created = "2026-11-14"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "195d2684e6b7b22733798a213ea16c52b566d66a0666864ee1fffd118cef552f"
+size = 722
+immutable = true
+note = "Solo escritura y lectura de vuelta. Se escribe SIN herostop para separar 'colgado entre el bloque 19 y el 20' de 'el kernel avanza pero el dibujo por el alias virtual no se ve'."

@@ -8,7 +8,12 @@ Los informes para el jefe técnico (ChatGPT) usan el mismo formato: se le entreg
 
 ---
 
-## Relevo vigente: H-0043 — min9h23 (kernel 0344, D-0043, 1/20) ESCRITA; teléfono en TWRP, sin reiniciar (2026-11-14)
+## Relevo vigente: H-0044 — min9 (kernel 0344, sin herostop) ESCRITA (D-0043, 2/20); teléfono en TWRP, sin reiniciar (2026-11-14)
+- **Tarea en curso: T-0012.** E-0105: con herostop=23 la pantalla quedó como en h19 (4 `rb:` y bloques hasta el 19; sin pánico ni bloques 20-23). BOOT = `xnu-boot-v2-s7-min9-20261114.img` (sha256 `501b889e…409e`), leída de vuelta; EFS intacto (E-0106).
+- **Qué distingue min9:** si la pantalla acaba en el **estado de reinicio** (azul/cian/magenta + XNU MMU ON, sin texto) ⇒ el kernel NO se cuelga entre 19 y 20: avanza y el freeze de h23 era real pero el dibujo por el alias no se ve (el alias no funciona: revisar atributos/offset). Si acaba **congelada como h19** (texto + 19 bloques) ⇒ el kernel se cuelga justo al apagar TTBR0 o al dibujar por el alias (siguiente: prueba previa a TTBR0 off con lectura cruzada alias VA ↔ PA).
+- Restaurar BOOT original (E-0009) cubierto por D-0043.
+
+## Relevo anterior: H-0043 — min9h23 (kernel 0344, D-0043, 1/20) ESCRITA; teléfono en TWRP, sin reiniciar (2026-11-14)
 - **Tarea en curso: T-0012.** BOOT = `xnu-boot-v2-s7-min9h23-20261114.img` (sha256 `4b0d8fd5…d8ed`); EFS intacto (E-0104). Revisión del kernel: E-0094; imágenes preparadas: E-0095…E-0103 (min9 sin herostop y h20…h27).
 - **Siguiente (Director):** `adb reboot`, mirar la columna derecha: tras los 19 bloques de siempre, **20 naranja-rojo, 21 oro, 22 rosa, 23 verde** y la pantalla congelada. Si no hay bloques nuevos tras el 19: h20. Si hay un `A5 XNU PANIC`: transcribir archivo, línea y condición literales.
 - Restaurar BOOT original (E-0009) cubierto por D-0043.

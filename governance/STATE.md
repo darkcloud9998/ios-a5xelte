@@ -1,14 +1,19 @@
 # Estado actual de IOS S7
 
-<!-- state-commit: b6c05e8 -->
-**Verificado el 2026-11-14 sobre el commit `b6c05e8`** (el estado se refresca en cada relevo; `check` avisa de la distancia).
+<!-- state-commit: 4681456 -->
+**Verificado el 2026-11-14 sobre el commit `4681456`** (el estado se refresca en cada relevo; `check` avisa de la distancia).
 
 ## 1. En una frase
-Todo es **trabajo en el PC**: hay una candidata BOOT de primer arranque (variante mínima) **construida y verificada**, una imagen de raíz de laboratorio con nombres en forma XNU **verificada**, copias del teléfono **comprobadas**, y un estudio completo de la arquitectura gráfica S7GE. **Nada se ha escrito ni probado en el Galaxy S7** (BOOT original de Samsung; no hay evidencia L3/L4 de esta unidad). Lo único que falta para el primer arranque es la **autorización roja del Director** (y que su backup termine).
+**Primer contacto con el hardware (2026-11-14):** seis imágenes BOOT escritas en el S7 (min1-min6) y una séptima (min7h08, tanda D-0041) escrita sin reiniciar. Ninguna llega a la consola de XNU: **la ejecución pasa por `start.s` y por `arm_init` hasta, al menos, la marca 6a** (min5, bloques de color vistos) y **se reinicia en pocos milisegundos** (la pantalla final es la de después del reinicio). No se sabe en qué fase; la bisección con `herostop=N` (0341) está en curso. iOS **no** está instalado ni arranca; USERDATA (Android) no se ha tocado. Para el resto (backups, GPU, Mesa/OSMesa, root de laboratorio) ver §2.
 
 ## 2. Hechos medidos (con evidencia)
 | Hecho | Evidencia | Nivel |
 |---|---|---|
+| **Escrituras en BOOT (solo BOOT; EFS idéntico antes y después en cada sesión):** min1 (D-0033), min2 (D-0034), min3 (D-0035), min4 (D-0036), min5 (D-0037), min6 (D-0039), min7h08 (D-0041); cada una leída de vuelta con su hash | E-0043, E-0046, E-0049, E-0051, E-0053, E-0056, E-0060 | L2 |
+| min1: panic en `kmem_range_init` (ADT de 2 GiB sin `vm_compression_limit`); min2-min6: pantalla final "azul, cian, magenta + XNU MMU ON" tras un reinicio; min5: vistos 7 bloques de la columna derecha (hasta 6a) y texto de etapas 1-3; min6: nada visible entre el cargador y la pantalla final | E-0044, E-0057 y `docs/S7GE_MIN2..MIN6_*` (observaciones a ojo del Director) | L2 |
+| Parches de diagnóstico 0338-0342 (bloques de color, `herostop=N`, contador en `0x8ffff108`); kernel `4e5f25a5…4d6f` (CI 43603366417) | E-0058 | L1/L2 |
+| TWRP **no** tiene `/dev/mem` (`# CONFIG_DEVMEM is not set`); `last_kmsg` no contiene rastro de XNU; la línea de arranque de TWRP trae `sec_debug.reset_reason=5` (sin interpretar) | E-0054, E-0060 | L2 |
+| Imágenes de la bisección preparadas: min7 (sin herostop), h02, h04, h06, h12, h16, h19 (verificadas, NO escritas) | E-0058, E-0061..E-0066 | L2 |
 | **Candidata de primer arranque** `xnu-boot-v2-s7-min-20261114.img` (SHA-256 `07ddfa06…5db3`): kernel compilado por el CI (run `43579309448`) con los parches 0332-0337; línea de solo lectura **y sin Wi-Fi, energía ni GPU** (`herowifi=0 heropower=0 herogpu=0`); 47 PASS (constructor) y 54 PASS (independiente), 0 FAIL | E-0037, E-0040 | L1/L2 |
 | Candidata normal `xnu-boot-v2-s7-20261114.img` (SHA-256 `2c155829…8f40`): la misma sin los tres `=0` de hardware; 47/51 PASS. Reserva para una fase 3 con autorización propia | E-0038 | L2 |
 | La candidata anterior de solo lectura (`26a39560…1d29`, kernel sin los parches de upstream) se conserva: 47/50 PASS | E-0001..E-0006 | L2 |
@@ -42,7 +47,7 @@ Remotos: `origin` = `wardevsa/ios-a5xelte` (upstream, **sin push**), `mio` = `da
 ## 5. Bloqueos abiertos (qué los desbloquea)
 | Bloqueo | Quién | Tarea |
 |---|---|---|
-| **Autorización roja de escribir BOOT** (variante mínima, fase 1) con imagen y hash nombrados; antes: backup completo y recortado (KI-0008), segunda copia de EFS recomendada | Director | T-0012 |
+| **Localizar la fase del reinicio** (bisección con `herostop`, tanda D-0041, 7 escrituras restantes; el Director reinicia y observa) | Director + Ingeniero | T-0012 |
 | R2 sigue sin autorizar (D-0005): el Director debe decir expresamente que puede ejecutarse | Director | T-0004, T-0006 |
 | Ratificar D-0007 (rango 0400+), D-0009 (DROP v2), D-0011, D-0012, D-0013 (permisos de Claude Code), D-0015 (aislamiento de clientes de HeroGPU) | Jefatura técnica / Director | T-0014, T-0018, T-0021, T-0023 |
 | Portar el gancho `mmap` de Panfrost y compilar con Panfrost/iOS (B2 ya elegida y autorizada): falta `libdrm-dev` o el CI (D-0032) | Ingeniero + Director (instalar herramientas / publicar) | T-0037 |

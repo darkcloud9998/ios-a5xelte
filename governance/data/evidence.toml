@@ -894,3 +894,93 @@ sha256 = "75f78d1e69a18fcab53a186c247b3c375add369139050c4f481c3baf073fe054"
 size = 724
 immutable = true
 note = "Solo escritura y lectura de vuelta. La lectura de RAM por /dev/mem falló: el kernel de TWRP lleva '# CONFIG_DEVMEM is not set' (zcat /proc/config.gz); se creó y se borró el nodo temporal; no se leyó nada. last_kmsg tampoco contiene el marcador XNUELET1. Dato nuevo, solo lectura: la línea de arranque de TWRP trae sec_debug.reset_reason=5 y sec_reset.reset_reason=5 (significado sin verificar)."
+
+[[evidence]]
+id = "E-0061"
+title = "Imagen preparada de la tanda D-0041: min7h02 = min7 + herostop=2; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run8-min7/xnu-boot-v2-s7-min7h02-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "c855193caa2650012a919a47aca33fac0290f35559f1f78654a85e1fbfc2f470"
+size = 18618384
+immutable = true
+note = "Mismo kernel, ADT y cargador que E-0058; la línea de arranque difiere solo en herostop=2 (diff comprobado). Construida de antemano para la bisección; se escribirá solo si el resultado de la anterior lo pide, con el hash ya registrado aquí (D-0041)."
+
+[[evidence]]
+id = "E-0062"
+title = "Imagen preparada de la tanda D-0041: min7h04 = min7 + herostop=4; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run8-min7/xnu-boot-v2-s7-min7h04-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "dbf68f1d4b9485d89c4fe30fe32988d60c90b7d46598b54794b6e6fec7e7f6ad"
+size = 18618384
+immutable = true
+note = "Mismo kernel, ADT y cargador que E-0058; la línea de arranque difiere solo en herostop=4 (diff comprobado). Construida de antemano para la bisección; se escribirá solo si el resultado de la anterior lo pide, con el hash ya registrado aquí (D-0041)."
+
+[[evidence]]
+id = "E-0063"
+title = "Imagen preparada de la tanda D-0041: min7h06 = min7 + herostop=6; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run8-min7/xnu-boot-v2-s7-min7h06-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "379cce6b186c88ef04ab73e7e4ee652183a8a6148425c2b4dce163dc11db2d03"
+size = 18618384
+immutable = true
+note = "Mismo kernel, ADT y cargador que E-0058; la línea de arranque difiere solo en herostop=6 (diff comprobado). Construida de antemano para la bisección; se escribirá solo si el resultado de la anterior lo pide, con el hash ya registrado aquí (D-0041)."
+
+[[evidence]]
+id = "E-0064"
+title = "Imagen preparada de la tanda D-0041: min7h12 = min7 + herostop=12; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run8-min7/xnu-boot-v2-s7-min7h12-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "80216246f731c390007716fadaf679ed35bc3182a756b55dd7970247fa97a98c"
+size = 18618384
+immutable = true
+note = "Mismo kernel, ADT y cargador que E-0058; la línea de arranque difiere solo en herostop=12 (diff comprobado). Construida de antemano para la bisección; se escribirá solo si el resultado de la anterior lo pide, con el hash ya registrado aquí (D-0041)."
+
+[[evidence]]
+id = "E-0065"
+title = "Imagen preparada de la tanda D-0041: min7h16 = min7 + herostop=16; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run8-min7/xnu-boot-v2-s7-min7h16-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "6c8caa704fd0f80b63d969e3701b73e3b96514aad1a6b23f82d9c9ddd162962d"
+size = 18618384
+immutable = true
+note = "Mismo kernel, ADT y cargador que E-0058; la línea de arranque difiere solo en herostop=16 (diff comprobado). Construida de antemano para la bisección; se escribirá solo si el resultado de la anterior lo pide, con el hash ya registrado aquí (D-0041)."
+
+[[evidence]]
+id = "E-0066"
+title = "Imagen preparada de la tanda D-0041: min7h19 = min7 + herostop=19; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run8-min7/xnu-boot-v2-s7-min7h19-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "fd1ec365b736e2e7cad975de60dad94f1a071a6511a3e48233b841085ed422a1"
+size = 18618384
+immutable = true
+note = "Mismo kernel, ADT y cargador que E-0058; la línea de arranque difiere solo en herostop=19 (diff comprobado). Construida de antemano para la bisección; se escribirá solo si el resultado de la anterior lo pide, con el hash ya registrado aquí (D-0041)."

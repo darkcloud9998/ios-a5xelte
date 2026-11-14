@@ -1389,3 +1389,153 @@ sha256 = "080f2052d37c350ea9c308215f273258fd35167b752ef20b56ca428f9400ff0b"
 size = 455
 immutable = true
 note = "La aserción es la de a5_early_map_final() (parche 0343, mío): no hay entrada L1 en VM_MIN_KERNEL_ADDRESS sin ARM_LARGE_MEMORY. Es un fallo de mi diagnóstico, NO el reinicio que se busca. Lo que faltaba coincide con el orden de ejecución (la función se llama antes de 'rb: physmap_init'). Útil: el pánico temprano SE DIBUJA. Sin vídeo."
+
+[[evidence]]
+id = "E-0094"
+title = "Revisión D-0043 del kernel 1a8699a7…0983 (CI 43613119407, parches 0338-0344): solo diagnóstico de arranque temprano; 0332-0337 intactos; ci_check aplica 0343 y 0344"
+kind = "result"
+path = "/home/pioxi/HackiOS/builds/device-day/phase1-20261114/review-kernel-0344.txt"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "7677e4f44c32532974ebfa7dc96fe3f0881803c04723926a56ecc71b5642f4c6"
+size = 2421
+immutable = true
+note = "Condición (1) de D-0043. Kernel sha256 1a8699a79751c6073d06da908ceb13f80ca938facb27aa5c6a9af4f9cda60983. El parche más intrusivo es 0343 (mapeo del framebuffer en la tabla final); está declarado en la revisión."
+
+[[evidence]]
+id = "E-0095"
+title = "Imagen preparada (kernel 0344, CI 43613119407; D-0043): xnu-boot-v2-s7-min9-20261114 = línea de min2; 47 PASS constructor y 57 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run10-min9/xnu-boot-v2-s7-min9-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "501b889e6efdc6ba8cae74fc21f118da157544bdc6c27e449c24503ec1c2409e"
+size = 18618384
+immutable = true
+note = "Kernel 1a8699a79751c6073d06da908ceb13f80ca938facb27aa5c6a9af4f9cda60983 (revisión E-0094), ADT dc817436… y cargador 0a68abbd… como min2-min8. La línea de arranque difiere de min2 solo en herostop (comprobado)."
+
+[[evidence]]
+id = "E-0096"
+title = "Imagen preparada (kernel 0344, CI 43613119407; D-0043): xnu-boot-v2-s7-min9h20-20261114 = línea de min2 herostop=20; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run10-min9/xnu-boot-v2-s7-min9h20-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "c63ab4683eabd4213fc9ce5b66b6bedcb13d1b06021a0b85f69df822a2f7514d"
+size = 18618384
+immutable = true
+note = "Kernel 1a8699a79751c6073d06da908ceb13f80ca938facb27aa5c6a9af4f9cda60983 (revisión E-0094), ADT dc817436… y cargador 0a68abbd… como min2-min8. La línea de arranque difiere de min2 solo en herostop (comprobado)."
+
+[[evidence]]
+id = "E-0097"
+title = "Imagen preparada (kernel 0344, CI 43613119407; D-0043): xnu-boot-v2-s7-min9h21-20261114 = línea de min2 herostop=21; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run10-min9/xnu-boot-v2-s7-min9h21-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "e4fb7e024352b540a690d3798f76d7b7fe996abca16e7184b5dee612c22d37d9"
+size = 18618384
+immutable = true
+note = "Kernel 1a8699a79751c6073d06da908ceb13f80ca938facb27aa5c6a9af4f9cda60983 (revisión E-0094), ADT dc817436… y cargador 0a68abbd… como min2-min8. La línea de arranque difiere de min2 solo en herostop (comprobado)."
+
+[[evidence]]
+id = "E-0098"
+title = "Imagen preparada (kernel 0344, CI 43613119407; D-0043): xnu-boot-v2-s7-min9h22-20261114 = línea de min2 herostop=22; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run10-min9/xnu-boot-v2-s7-min9h22-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "a9792158c262209f146433dd452cda1e95499d826e6356f2066ba894dfa8f3a7"
+size = 18618384
+immutable = true
+note = "Kernel 1a8699a79751c6073d06da908ceb13f80ca938facb27aa5c6a9af4f9cda60983 (revisión E-0094), ADT dc817436… y cargador 0a68abbd… como min2-min8. La línea de arranque difiere de min2 solo en herostop (comprobado)."
+
+[[evidence]]
+id = "E-0099"
+title = "Imagen preparada (kernel 0344, CI 43613119407; D-0043): xnu-boot-v2-s7-min9h23-20261114 = línea de min2 herostop=23; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run10-min9/xnu-boot-v2-s7-min9h23-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "4b0d8fd536d803b64edf5c1a54167712cd5cb255fd5bafc5cab16055522ad8ed"
+size = 18618384
+immutable = true
+note = "Kernel 1a8699a79751c6073d06da908ceb13f80ca938facb27aa5c6a9af4f9cda60983 (revisión E-0094), ADT dc817436… y cargador 0a68abbd… como min2-min8. La línea de arranque difiere de min2 solo en herostop (comprobado)."
+
+[[evidence]]
+id = "E-0100"
+title = "Imagen preparada (kernel 0344, CI 43613119407; D-0043): xnu-boot-v2-s7-min9h24-20261114 = línea de min2 herostop=24; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run10-min9/xnu-boot-v2-s7-min9h24-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "79cbe2f39b1f2455b9703d1bb39b5724810235717ccd4810eb76ac374de3f072"
+size = 18618384
+immutable = true
+note = "Kernel 1a8699a79751c6073d06da908ceb13f80ca938facb27aa5c6a9af4f9cda60983 (revisión E-0094), ADT dc817436… y cargador 0a68abbd… como min2-min8. La línea de arranque difiere de min2 solo en herostop (comprobado)."
+
+[[evidence]]
+id = "E-0101"
+title = "Imagen preparada (kernel 0344, CI 43613119407; D-0043): xnu-boot-v2-s7-min9h25-20261114 = línea de min2 herostop=25; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run10-min9/xnu-boot-v2-s7-min9h25-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "d4c25acfd154d48f74e86456a9ac4ef063a19bd183fe5e17ba74e0931e544d7f"
+size = 18618384
+immutable = true
+note = "Kernel 1a8699a79751c6073d06da908ceb13f80ca938facb27aa5c6a9af4f9cda60983 (revisión E-0094), ADT dc817436… y cargador 0a68abbd… como min2-min8. La línea de arranque difiere de min2 solo en herostop (comprobado)."
+
+[[evidence]]
+id = "E-0102"
+title = "Imagen preparada (kernel 0344, CI 43613119407; D-0043): xnu-boot-v2-s7-min9h26-20261114 = línea de min2 herostop=26; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run10-min9/xnu-boot-v2-s7-min9h26-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "90b4034304f5ff26a00be18fac50a0e7591295b4cceb09de18061d17cc91873d"
+size = 18618384
+immutable = true
+note = "Kernel 1a8699a79751c6073d06da908ceb13f80ca938facb27aa5c6a9af4f9cda60983 (revisión E-0094), ADT dc817436… y cargador 0a68abbd… como min2-min8. La línea de arranque difiere de min2 solo en herostop (comprobado)."
+
+[[evidence]]
+id = "E-0103"
+title = "Imagen preparada (kernel 0344, CI 43613119407; D-0043): xnu-boot-v2-s7-min9h27-20261114 = línea de min2 herostop=27; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run10-min9/xnu-boot-v2-s7-min9h27-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "2d19973ebefaea12c8e96c346e1d56bf745c1cd343a2094a1f051184c60e97fe"
+size = 18618384
+immutable = true
+note = "Kernel 1a8699a79751c6073d06da908ceb13f80ca938facb27aa5c6a9af4f9cda60983 (revisión E-0094), ADT dc817436… y cargador 0a68abbd… como min2-min8. La línea de arranque difiere de min2 solo en herostop (comprobado)."

@@ -8,7 +8,12 @@ Los informes para el jefe técnico (ChatGPT) usan el mismo formato: se le entreg
 
 ---
 
-## Relevo vigente: H-0041 — h23 (kernel 0343) PANICÓ por un fallo de mi parche; corrección 0344 en CI (2026-11-14)
+## Relevo vigente: H-0042 — autorización amplia de diagnóstico D-0043 registrada; CI de 0344 en curso (2026-11-14)
+- **Tarea en curso: T-0012.** D-0043 (hasta 20 escrituras, hasta 2026-11-16): kernels del CI de `herolte-drop-v2` con 0332-0337 intactos y parches posteriores que pasen `tools/herolte-diag-patch-check.py` y estén revisados y registrados (evidencia con run, hash y qué hace cada cambio); mismo ADT y cargador; línea de min2 + `herostop=N`; 47/57 PASS; hashes registrados antes de escribir.
+- **Ahora:** CI 43613119407 (0344) → cuando termine: ci_check, revisar el contenido de 0343+0344 (solo dibujo; ya hecho al escribirlos, registrar), construir h20…h27, escribir **h23** y continuar.
+- El teléfono está en TWRP con h23 del kernel 0343 (que panica por mi fallo). Restaurar BOOT original (E-0009) cubierto por D-0043.
+
+## Relevo anterior: H-0041 — h23 (kernel 0343) PANICÓ por un fallo de mi parche; corrección 0344 en CI (2026-11-14)
 - **Tarea en curso: T-0012** (D-0042: 1/8 usada, pero el kernel va a cambiar). E-0093: `A5 XNU PANIC: arm_vm_init.c:1878 Assertion failed (l1 …TYPE_TABLE)` en `a5_early_map_final()`: falta la entrada L1 de `VM_MIN_KERNEL_ADDRESS`.
 - **Hecho:** parche 0344 (`init_ptpages` antes de leer el L1) escrito, aplica; publicado en `mio` y CI lanzado. **Siguiente:** CI → descargar → construir h20…h27 con el kernel nuevo → pedir tanda nueva (D-0043) con su hash.
 - **El teléfono** está en TWRP con h23 (kernel 0343, panica pronto: no sirve para más pruebas). Restaurar BOOT original (E-0009) cubierto por D-0042.

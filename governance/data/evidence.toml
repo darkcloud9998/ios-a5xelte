@@ -789,3 +789,18 @@ sha256 = "e2d67330c3e19de3e0abb18a3b1fea470aaa7c8027497acb02b389f6245f2de7"
 size = 721
 immutable = true
 note = "Solo escritura y lectura de vuelta (D-0037). El teléfono sigue en TWRP, sin reiniciar. El hash de EFS varía entre sesiones de TWRP; se comprobó dentro de la sesión."
+
+[[evidence]]
+id = "E-0054"
+title = "Lectura de solo lectura desde TWRP tras min5 (D-0038): /proc/iomem y /proc/last_kmsg; sin rastro de XNU ni del marcador; cuatro pasadas de S-Boot al final del registro"
+kind = "result"
+path = "~/HackiOS/builds/device-day/phase1-20261114/min5-last_kmsg.bin"
+location = "host"
+created = "2026-11-14"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "8c4bc6e6c1671a5b58183c98f5532c7c57480993a15c2e89cf8e661a1dd1eb89"
+size = 1930113
+immutable = true
+note = "last_kmsg (1,9 MB, fuera de git; con bits alterados en muchas líneas) es el registro de Linux/TWRP anterior más las líneas de S-Boot; no contiene salida de XNU. Al final aparecen 4 bloques 'load Secure Payload done' (4 pasadas de S-Boot): no atribuibles a un reinicio concreto. /proc/iomem en min5-iomem.txt (sha256 e8b3693d…cebe). No se leyó el marcador 0x8ffff100: TWRP no tiene /dev/mem."

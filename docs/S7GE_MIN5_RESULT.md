@@ -22,3 +22,9 @@ Según el relato, tras "bloques + texto + columna derecha" la pantalla pasa a **
 2. **Si lima y violeta están:** el cuelgue/reinicio está en `arm_vm_init`. min6 = parche `0340` con bloques dentro de `arm_vm_init` (antes y después de cada fase: `arm_vm_physmap_init`, `arm_vm_prot_init`, cambio de TTBR0) usando el alias físico mientras exista, y el blanco corregido.
 3. **Si faltan:** el parón está entre 6a y 6b: min6 con bloques entre `PE_parse_boot_argn`, `PE_get_default` y el bloque de higiene.
 4. **Sobre el reinicio:** si se quiere saber cuántas veces entró `start.s`, hace falta decisión del Director para leer el marcador de RAM desde TWRP (lectura sin escritura). No lo pido aún.
+
+## 5. Lectura de solo lectura desde TWRP (D-0038, E-0054)
+- **Método:** `/proc/iomem` y `/proc/last_kmsg` (opción 2 de la jefatura, aprobada por el Director). `/dev/mem` no existe en TWRP; **no se creó** (mknod necesitaría autorización explícita).
+- **last_kmsg** (1,9 MB, no se sube a git): es el registro de la sesión Linux/TWRP anterior (hasta ~1245 s) seguido de **líneas de S-Boot**. Muchas líneas tienen bits alterados (`Booqt` por `Boost`), así que sirve de indicio, no de transcripción. **No contiene texto de XNU** (`A5 XNU…`, `XNUELET1`).
+- **Cuatro** bloques `load Secure Payload done` al final = cuatro pasadas de S-Boot. Con el flujo del Director (`adb reboot` hacia min5, reinicio forzado con teclas, entrada a TWRP con teclas) se esperan ~3; la cuarta **podría** ser un reinicio por hardware durante min5, pero no es atribuible: no hay marcas de tiempo en las líneas de S-Boot. **Evidencia débil, no concluyente.**
+- **Siguiente lectura útil (necesita autorización explícita):** crear `/dev/mem` (nodo temporal en el disco virtual de TWRP) y leer 4 KiB en `0x8ffff100` para ver si `XNUELET1` está; solo dice que `start.s` corrió, no cuántas veces ni por qué se reinició.

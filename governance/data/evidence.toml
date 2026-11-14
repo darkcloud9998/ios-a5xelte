@@ -729,3 +729,18 @@ sha256 = "0a8cedf6d02d29ce6d6ae1bd519d873c3bf14b35a174cf5996bf2dc4285c4c58"
 size = 721
 immutable = true
 note = "Solo la escritura y la lectura de vuelta (D-0035). El teléfono sigue en TWRP, sin reiniciar. Que arranque, y qué muestre, es evidencia aparte que aportará el Director."
+
+[[evidence]]
+id = "E-0050"
+title = "Candidata min4: kernel con el parche 0338 (CI 43594581291) + ADT original de 2 GiB (E-0040) + línea de arranque de min2; 47 PASS constructor y 57 PASS independiente, 0 FAIL"
+kind = "image"
+path = "~/HackiOS/builds/device-day/boot-candidates-n2-run5-min4/xnu-boot-v2-s7-min4-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "8e8725f3fbe42c830daa34d88796d479ece1ff5e33e64269ecd63cf070b980b4"
+size = 18618384
+immutable = true
+note = "Kernel af7b8760...954a7a (run 43594581291, rama herolte-drop-v2 en 0900772; ci_check: 0338 APLICADO; las cadenas 6a/6c están en el binario). ADT dc817436... y cmdline.txt idénticos a min2. Los bloques de ensamblador no se han comprobado en el binario, solo que el CI aplicó el parche. NO escrita en el teléfono: exige autorización roja nueva con este hash."

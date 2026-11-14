@@ -849,3 +849,18 @@ sha256 = "7ca2b18178b637c623565acb2d9e490064820c9e03595c966368b3f7acfa63c2"
 size = 250
 immutable = true
 note = "Transcripción literal del Director, sin vídeo archivado. Contradice min5 (donde sí se vieron texto de etapas y 7 bloques): puede ser un fallo de observación (fugaz) o una regresión de 0340; no se distingue sin vídeo o sin congelar la pantalla."
+
+[[evidence]]
+id = "E-0058"
+title = "Candidata min7: kernel 0338-0342 (CI 43603366417) + ADT de 2 GiB + línea de min2 sin herostop; 47 PASS constructor y 57 PASS independiente, 0 FAIL"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run8-min7/xnu-boot-v2-s7-min7-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "66868977473468b3166b13f29ec76e7e4f601c084625369e55acac9a03cbca23"
+size = 18618384
+immutable = true
+note = "Kernel 4e5f25a5d9d72787225b8b1425eda9831d8c9e07b2017447d71c632d12764d6f (ci_check: 0341 y 0342 APLICADO). ADT y cmdline.txt idénticos a min2. Primera imagen de la tanda D-0041 (sin herostop). Cambia solo el kernel respecto a min6."

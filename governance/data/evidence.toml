@@ -1104,3 +1104,18 @@ sha256 = "107bbc770f615eaf77f0bf0032be2962e42a70d5d24095df7c0030ce1715fddd"
 size = 724
 immutable = true
 note = "Solo escritura y lectura de vuelta (D-0041; hash registrado antes en E-0065). La línea de arranque difiere de min7 solo en herostop=16 (diff comprobado). sec_debug.reset_reason en TWRP sigue en 5 (la entrada a TWRP fue por teclas)."
+
+[[evidence]]
+id = "E-0075"
+title = "Observación de min7h16 (Director): congela con texto hasta 'rb: physmap_init' y 17 bloques (0-13, 15, 16; el 14 vacío): el kernel llega al bloque 16, justo antes de arm_vm_physmap_init; el reinicio es posterior"
+kind = "observation"
+path = "/home/pioxi/HackiOS/builds/device-day/phase1-20261114/min7h16-observation.txt"
+location = "host"
+created = "2026-11-14"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "65677462ba3eed71f17a12234f11ba2d710a2855fe96297ccbe0906d92543167"
+size = 955
+immutable = true
+note = "Transcripción literal; sin vídeo. Coincide con lo predicho: el slot 14 (y='rb: physmap tables') está dentro de '#if defined(ARM_LARGE_MEMORY)', no compilado para herolte, y por eso falta tanto su texto como su bloque (comprobado en el código, arm_vm_init.c ~2051-2060). Colores por posición: 0 rojo … 9 blanco (ahora se dibuja), 10 rosa, 11 turquesa, 12 marrón, 13 rosa, 14 VACÍO (esperado), 15 marrón, 16 rosa intenso."

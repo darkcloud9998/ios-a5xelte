@@ -8,7 +8,12 @@ Los informes para el jefe técnico (ChatGPT) usan el mismo formato: se le entreg
 
 ---
 
-## Relevo vigente: H-0031 — h16 ESCRITA (2/8 de la tanda D-0041); teléfono en TWRP, sin reiniciar (2026-11-14)
+## Relevo vigente: H-0032 — h16 CONGELÓ: el reinicio es posterior al bloque 16 (antes de arm_vm_physmap_init) (2026-11-14)
+- **Tarea en curso: T-0012** (D-0041, 2/8 usadas). Observación E-0075: texto hasta `rb: physmap_init`, 17 bloques, hueco del 14 esperado (`#if ARM_LARGE_MEMORY` no compilado).
+- **Siguiente:** el Director fuerza el apagado (Vol− + Power ~7 s), entra en TWRP (Vol+ + Home + Power) y avisa; el ingeniero escribe **h17** (sha256 en E-0071 de la serie preparada; ya registrado). Si h17 **no** congela ⇒ el reinicio está dentro de `arm_vm_physmap_init`.
+- Restaurar BOOT original (E-0009) cubierto por D-0041.
+
+## Relevo anterior: H-0031 — h16 ESCRITA (2/8 de la tanda D-0041); teléfono en TWRP, sin reiniciar (2026-11-14)
 - **Tarea en curso: T-0012.** BOOT = `xnu-boot-v2-s7-min7h16-20261114.img` (sha256 `6c8caa70…2962d`), leída de vuelta; EFS intacto (E-0074). Quedan 6 escrituras.
 - **Siguiente (Director):** `adb reboot`, mirar. Resultados: **congela** con texto hasta 6c más la marca "7: entering arm_vm_init" y rosa/turquesa/marrón (slots 13-15) + slot 16 ⇒ el reinicio es posterior a 16 (siguiente h18); **no congela** (azul/cian/magenta + XNU MMU ON) ⇒ anterior a 16 (siguiente h14). Plan en `docs/S7GE_HEROSTOP_BISECT.md`.
 - Restaurar BOOT original (E-0009) cubierto por D-0041.

@@ -8,7 +8,12 @@ Los informes para el jefe técnico (ChatGPT) usan el mismo formato: se le entreg
 
 ---
 
-## Relevo vigente: H-0047 — min10: pánico en la sonda del alias (mi parche); 0346 (AT + números) en CI (2026-11-14)
+## Relevo vigente: H-0048 — min11 (kernel 0346, sin herostop) ESCRITA (D-0043, 4/20); teléfono en TWRP, sin reiniciar (2026-11-14)
+- **Tarea en curso: T-0012.** BOOT = `xnu-boot-v2-s7-min11-20261114.img` (sha256 `483bb381…685c`); EFS intacto (E-0117). Revisión del kernel E-0115; imagen E-0116.
+- **Qué mirar (Director, tras `adb reboot`):** tras los cuatro `rb:`, líneas `A5V TTBR1=0x… / TCR / cpu_ttep / VA / L1e / L2e / PAR` (copiarlas literales), y el bloque 20 (VERDE = alias válido, ROJO = no). Si el alias es válido, el kernel sigue y se verán bloques 21+. Si no, queda parado con los números en pantalla.
+- Restaurar BOOT original (E-0009) cubierto por D-0043.
+
+## Relevo anterior: H-0047 — min10: pánico en la sonda del alias (mi parche); 0346 (AT + números) en CI (2026-11-14)
 - **Tarea en curso: T-0012.** E-0114: `Invalid kernel stack pointer` en `_vm_fault_internal+0x24` (segundo fallo, NULL+0x9e); el primero es el acceso por el alias virtual en la sonda de 0345 (docs/S7GE_MIN10_PANIC.md).
 - **Hecho:** 0346 (imprime TTBR1/TCR/cpu_ttep/VA/L1e/L2e, `AT S1E1W` + PAR_EL1, y solo escribe si la traducción existe; si no, se detiene con los números). Publicado en `mio`; CI en curso. Luego: revisión D-0043 (E-…), imágenes min11 y escribir (D-0043: 3/20 usadas).
 - **Teléfono:** en TWRP con min10 (panica en la sonda). Restaurar BOOT original (E-0009) cubierto por D-0043.

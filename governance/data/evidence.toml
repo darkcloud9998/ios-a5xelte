@@ -774,3 +774,18 @@ sha256 = "4cb134c25ba32ddbf478ddb172d259656c3e2f624e1faf778c96d9dd86293bd5"
 size = 18618384
 immutable = true
 note = "Kernel 6693c690...5317fe (run 43596777961, rama herolte-drop-v2 en 842a4e5; ci_check: 0339 APLICADO). ADT dc817436... y cmdline.txt idénticos a min2/min4. Cambia solo el kernel respecto a min4. NO escrita en el teléfono: exige autorización roja nueva con este hash."
+
+[[evidence]]
+id = "E-0053"
+title = "Intento 5: BOOT del S7 escrito con xnu-boot-v2-s7-min5-20261114.img y leído de vuelta (sha256 4cb134c2…93bd5); EFS idéntico antes y después de la sesión"
+kind = "result"
+path = "/home/pioxi/HackiOS/builds/device-day/phase1-20261114/flash-min5-out.txt"
+location = "host"
+created = "2026-11-14"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "e2d67330c3e19de3e0abb18a3b1fea470aaa7c8027497acb02b389f6245f2de7"
+size = 721
+immutable = true
+note = "Solo escritura y lectura de vuelta (D-0037). El teléfono sigue en TWRP, sin reiniciar. El hash de EFS varía entre sesiones de TWRP; se comprobó dentro de la sesión."

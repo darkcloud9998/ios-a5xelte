@@ -8,7 +8,12 @@ Los informes para el jefe técnico (ChatGPT) usan el mismo formato: se le entreg
 
 ---
 
-## Relevo vigente: H-0026 — min4 ESCRITA (D-0036) y verificada; el teléfono está en TWRP, SIN reiniciar (2026-11-14)
+## Relevo vigente: H-0027 — min5 ESCRITA (D-0037) y verificada; el teléfono está en TWRP, SIN reiniciar (2026-11-14)
+- **Hecho:** el Director firmó (D-0037). BOOT = `xnu-boot-v2-s7-min5-20261114.img` (sha256 `4cb134c2…93bd5`), leído de vuelta igual; EFS intacto dentro de la sesión (E-0053). Nada más escrito.
+- **Tarea en curso: T-0012.** Siguiente (Director): grabar en cámara lenta, **encuadrando también el borde derecho** (columna x=1300: rojo, verde, azul, amarillo, cian, magenta, naranja, lima, violeta, blanco de arriba abajo = etapas 1,2,3,4,5,6,6a,6b,6c,7), `adb reboot`, ≥ 2 min. Si no arranca: Vol− + Power ~7 s y Vol+ + Home + Power.
+- **Lectura:** ningún bloque en la columna ⇒ el cuelgue es anterior a `arm_init`; hasta el bloque n ⇒ la etapa n+1 no termina. Min6 (variar argumentos) solo tras ver esto. Restaurar el BOOT original (E-0009) está cubierto por D-0037.
+
+## Relevo anterior: H-0026 — min4 ESCRITA (D-0036) y verificada; el teléfono está en TWRP, SIN reiniciar (2026-11-14)
 - **Hecho:** el Director firmó (D-0036). BOOT = `xnu-boot-v2-s7-min4-20261114.img` (sha256 `8e8725f3…980b4`), leído de vuelta igual; EFS intacto dentro de la sesión (E-0051). Nada más escrito.
 - **Tarea en curso: T-0012.** Siguiente (Director): grabar en cámara lenta y de cerca, `adb reboot`, ≥ 2 min; rellenar `docs/S7GE_MIN4_OBSERVATION_TEMPLATE.md` (siete bloques por posición y color, texto literal, captura final). Si no arranca: Vol− + Power ~7 s y Vol+ + Home + Power.
 - **Después:** si se ven magenta y los naranjas, o hay ambigüedad por el texto, min5 = 0339 (`docs/S7GE_MIN5_DESIGN.md`; commit local, no empujado; requiere CI y autorización nueva). Restaurar el BOOT original (E-0009) está cubierto por D-0036.

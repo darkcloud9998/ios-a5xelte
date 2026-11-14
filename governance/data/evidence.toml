@@ -1704,3 +1704,33 @@ sha256 = "bcf16c0971d25e13428a3a3b94a5cf113eeb2175dd03aebe1c2f8189af93233c"
 size = 839
 immutable = true
 note = "PC y LR simbolizados con el kernel que corría (CI 43615727583): _vm_fault_internal+0x24 y _vm_fault+0x14. FAR=0x9e y ESR 0x96000005 (EC 0x25 aborto de datos en EL1, DFSC 0x05 = fallo de traducción nivel 1 en TTBR0): es una desreferencia de NULL+0x9e DENTRO de vm_fault, es decir, el SEGUNDO fallo. El primero (que entró en vm_fault sin hilo actual) no se ve. Valores de registros por IA a partir de fotos: no verificados."
+
+[[evidence]]
+id = "E-0115"
+title = "Revisión D-0043 del kernel d475bb73…95db (CI 43618574862, parches 0338-0346): solo diagnóstico de arranque temprano; 0332-0337 intactos; ci_check aplica 0346"
+kind = "result"
+path = "/home/pioxi/HackiOS/builds/device-day/phase1-20261114/review-kernel-0346.txt"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "c6a3f2c35ca23ca329bcc11769d639f518397c828aca39785a747f9b997d5949"
+size = 1891
+immutable = true
+note = "Condición (1) de D-0043. Kernel sha256 d475bb7382ffe6723cd26f8d6ed440e9a363254431bb77f1d6b2c015a3b395db. 0346 imprime registros de traducción y usa AT; escribe un píxel solo si la traducción existe."
+
+[[evidence]]
+id = "E-0116"
+title = "Imagen preparada (kernel 0346, CI 43618574862; D-0043): xnu-boot-v2-s7-min11-20261114 = línea de min2; 47 PASS constructor y 57 PASS independiente, 0 FAIL"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run12-min11/xnu-boot-v2-s7-min11-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "483bb3812a4d15062415312bfa21fcfdb4bd4398a130a3bbca3b18b99379685c"
+size = 18618384
+immutable = true
+note = "Kernel d475bb7382ffe6723cd26f8d6ed440e9a363254431bb77f1d6b2c015a3b395db (revisión E-0115), ADT dc817436… y cargador 0a68abbd… como antes; línea de arranque idéntica a min2 (diff)."

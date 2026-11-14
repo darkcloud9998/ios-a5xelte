@@ -8,7 +8,12 @@ Los informes para el jefe técnico (ChatGPT) usan el mismo formato: se le entreg
 
 ---
 
-## Relevo vigente: H-0032 — h16 CONGELÓ: el reinicio es posterior al bloque 16 (antes de arm_vm_physmap_init) (2026-11-14)
+## Relevo vigente: H-0033 — h17 ESCRITA (3/8 de la tanda D-0041); teléfono en TWRP, sin reiniciar (2026-11-14)
+- **Tarea en curso: T-0012.** BOOT = `xnu-boot-v2-s7-min7h17-20261114.img` (sha256 `5bf549f0…1ee0`), leída de vuelta; EFS intacto (E-0076). Quedan 5 escrituras.
+- **Siguiente (Director):** `adb reboot`, mirar. **Congela** con texto hasta `rb: physmap_init` **más** `7: rb: extra banks` / `rb: extra banks mapped` (marcas de dentro de `arm_vm_physmap_init`) y el bloque 17 (turquesa oscuro) ⇒ el reinicio es posterior (siguiente h18). **No congela** (azul/cian/magenta + XNU MMU ON) ⇒ el reinicio está **dentro de `arm_vm_physmap_init`**.
+- Restaurar BOOT original (E-0009) cubierto por D-0041.
+
+## Relevo anterior: H-0032 — h16 CONGELÓ: el reinicio es posterior al bloque 16 (antes de arm_vm_physmap_init) (2026-11-14)
 - **Tarea en curso: T-0012** (D-0041, 2/8 usadas). Observación E-0075: texto hasta `rb: physmap_init`, 17 bloques, hueco del 14 esperado (`#if ARM_LARGE_MEMORY` no compilado).
 - **Siguiente:** el Director fuerza el apagado (Vol− + Power ~7 s), entra en TWRP (Vol+ + Home + Power) y avisa; el ingeniero escribe **h17** (sha256 en E-0072; ya registrado). Si h17 **no** congela ⇒ el reinicio está dentro de `arm_vm_physmap_init`.
 - Restaurar BOOT original (E-0009) cubierto por D-0041.

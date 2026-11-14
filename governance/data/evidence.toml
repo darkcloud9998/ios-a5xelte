@@ -1164,3 +1164,18 @@ sha256 = "102e5e9d5ca05d10e54833ecabd6406a2ae9319ce421612fbf24d6fda123137d"
 size = 724
 immutable = true
 note = "Solo escritura y lectura de vuelta (D-0041; hash registrado antes en E-0073). Difiere de min7 solo en herostop=18 (diff comprobado)."
+
+[[evidence]]
+id = "E-0079"
+title = "Observación de min7h18 (Director), AMBIGUA: 'nada nuevo en los stages, solo apareció otro cian abajo del todo'; puede ser el bloque 17 (no se llegó al 18) o un 18 mal visto"
+kind = "observation"
+path = "/home/pioxi/HackiOS/builds/device-day/phase1-20261114/min7h18-observation.txt"
+location = "host"
+created = "2026-11-14"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "46349250590bf4a484c2ac25d6a8b8f867a27971a79d57902105ca2a3430f383"
+size = 451
+immutable = true
+note = "Transcripción literal; pendiente de aclarar (número de bloques de la columna, color del último, si siguió congelada). Si la pantalla era idéntica a h17 y estaba congelada, el kernel NO llegó a dibujar el bloque 18: se cuelga o falla dentro de/justo tras set_mmu_ttb_alternate. Sin vídeo."

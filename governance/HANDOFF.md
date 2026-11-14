@@ -8,7 +8,12 @@ Los informes para el jefe técnico (ChatGPT) usan el mismo formato: se le entreg
 
 ---
 
-## Relevo vigente: H-0025 — min3 ESCRITA (D-0035) y verificada; el teléfono está en TWRP, SIN reiniciar (2026-11-14)
+## Relevo vigente: H-0026 — min4 ESCRITA (D-0036) y verificada; el teléfono está en TWRP, SIN reiniciar (2026-11-14)
+- **Hecho:** el Director firmó (D-0036). BOOT = `xnu-boot-v2-s7-min4-20261114.img` (sha256 `8e8725f3…980b4`), leído de vuelta igual; EFS intacto dentro de la sesión (E-0051). Nada más escrito.
+- **Tarea en curso: T-0012.** Siguiente (Director): grabar en cámara lenta y de cerca, `adb reboot`, ≥ 2 min; rellenar `docs/S7GE_MIN4_OBSERVATION_TEMPLATE.md` (siete bloques por posición y color, texto literal, captura final). Si no arranca: Vol− + Power ~7 s y Vol+ + Home + Power.
+- **Después:** si se ven magenta y los naranjas, o hay ambigüedad por el texto, min5 = 0339 (`docs/S7GE_MIN5_DESIGN.md`; commit local, no empujado; requiere CI y autorización nueva). Restaurar el BOOT original (E-0009) está cubierto por D-0036.
+
+## Relevo anterior: H-0025 — min3 ESCRITA (D-0035) y verificada; el teléfono está en TWRP, SIN reiniciar (2026-11-14)
 - **Hecho:** el Director firmó la autorización (D-0035) con imagen y hash. `tools/herolte-flash-boot.sh --execute`: BOOT = `xnu-boot-v2-s7-min3-20261114.img` (sha256 `c70d3dd8…e36f`), leído de vuelta igual; EFS intacto (E-0049). Nada más escrito.
 - **Tarea en curso: T-0012.** Siguiente (Director): grabar en cámara lenta y de cerca, `adb reboot`, ≥ 2 min, y pasar el texto literal indicando que es de min3: ¿sale `A5 XNU STAGE 7`? ¿cinco bloques? ¿texto nuevo o panic? Si no arranca: Vol− + Power ~7 s y Vol+ + Home + Power.
 - **Pendiente de aclarar:** de qué arranque (min1/min2) es la transcripción STAGE 1-6 (MIN3_ANALYSIS §3); si es de min2, min3 probablemente no cambia el resultado y el paso siguiente son marcas entre las etapas 6 y 7 (kernel nuevo, CI).

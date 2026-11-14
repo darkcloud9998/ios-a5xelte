@@ -1089,3 +1089,18 @@ sha256 = "3f6b2fa78807ca0f58c32eb7a86fa41ed7329831a275b76500a3edc8f9b3f09a"
 size = 18618384
 immutable = true
 note = "Mismo kernel, ADT y cargador que E-0058; la línea de arranque difiere solo en herostop=18. Construida de antemano para la bisección posterior a la marca 8 (orden de ejecución 9,13,14,15,16,17,18,19)."
+
+[[evidence]]
+id = "E-0074"
+title = "Tanda D-0041, imagen 2/8: BOOT del S7 escrito con xnu-boot-v2-s7-min7h16-20261114.img y leído de vuelta (sha256 6c8caa70…2962d); EFS idéntico antes y después de la sesión"
+kind = "result"
+path = "/home/pioxi/HackiOS/builds/device-day/phase1-20261114/flash-min7h16-out.txt"
+location = "host"
+created = "2026-11-14"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "107bbc770f615eaf77f0bf0032be2962e42a70d5d24095df7c0030ce1715fddd"
+size = 724
+immutable = true
+note = "Solo escritura y lectura de vuelta (D-0041; hash registrado antes en E-0065). La línea de arranque difiere de min7 solo en herostop=16 (diff comprobado). sec_debug.reset_reason en TWRP sigue en 5 (la entrada a TWRP fue por teclas)."

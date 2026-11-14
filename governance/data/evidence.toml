@@ -804,3 +804,18 @@ sha256 = "8c4bc6e6c1671a5b58183c98f5532c7c57480993a15c2e89cf8e661a1dd1eb89"
 size = 1930113
 immutable = true
 note = "last_kmsg (1,9 MB, fuera de git; con bits alterados en muchas líneas) es el registro de Linux/TWRP anterior más las líneas de S-Boot; no contiene salida de XNU. Al final aparecen 4 bloques 'load Secure Payload done' (4 pasadas de S-Boot): no atribuibles a un reinicio concreto. /proc/iomem en min5-iomem.txt (sha256 e8b3693d…cebe). No se leyó el marcador 0x8ffff100: TWRP no tiene /dev/mem."
+
+[[evidence]]
+id = "E-0055"
+title = "Candidata min6: kernel con 0338, 0339 y 0340 (CI 43600631386) + ADT de 2 GiB + línea de arranque de min2; 47 PASS constructor y 57 PASS independiente, 0 FAIL"
+kind = "image"
+path = "~/HackiOS/builds/device-day/boot-candidates-n2-run7-min6/xnu-boot-v2-s7-min6-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "4f412a5beb66d4b330c27f2c4680b22562cac6405722b7d1ea7a48ec55129b43"
+size = 18618384
+immutable = true
+note = "Kernel c1bc0e8f...f676 (run 43600631386, rama herolte-drop-v2 en 9847af4; ci_check: 0340 APLICADO). ADT dc817436... y cmdline.txt idénticos a min2/min5. Cambia solo el kernel respecto a min5. NO escrita en el teléfono: la frase 'Autorizo min6' del Director es anterior a la imagen y no nombra hash; exige confirmación con este hash."

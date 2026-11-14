@@ -8,7 +8,12 @@ Los informes para el jefe técnico (ChatGPT) usan el mismo formato: se le entreg
 
 ---
 
-## Relevo vigente: H-0034 — h17 CONGELÓ: arm_vm_physmap_init termina; el reinicio es posterior al bloque 17 (2026-11-14)
+## Relevo vigente: H-0035 — h18 ESCRITA (4/8 de la tanda D-0041); teléfono en TWRP, sin reiniciar (2026-11-14)
+- **Tarea en curso: T-0012.** BOOT = `xnu-boot-v2-s7-min7h18-20261114.img` (sha256 `3f6b2fa7…f09a`), leída de vuelta; EFS intacto (E-0078). Quedan 4 escrituras.
+- **Siguiente (Director):** `adb reboot`, mirar. **Congela** con un bloque nuevo (chocolate, slot 18) debajo de los 18 anteriores ⇒ el reinicio es posterior a `set_mmu_ttb_alternate` (siguiente h19). **No congela** (azul/cian/magenta + XNU MMU ON) ⇒ el reinicio está en `set_mmu_ttb_alternate` (el cambio a la TTBR1 final).
+- Restaurar BOOT original (E-0009) cubierto por D-0041.
+
+## Relevo anterior: H-0034 — h17 CONGELÓ: arm_vm_physmap_init termina; el reinicio es posterior al bloque 17 (2026-11-14)
 - **Tarea en curso: T-0012** (D-0041, 3/8 usadas). Observación E-0077.
 - **Siguiente:** el Director fuerza el apagado (Vol− + Power ~7 s), entra en TWRP y avisa; el ingeniero escribe **h18** (sha256 en las evidencias de la serie preparada, E-0073). Si h18 **no** congela ⇒ el reinicio está en `set_mmu_ttb_alternate` (cambio de TTBR1 a la tabla final); si congela ⇒ h19.
 - Idea en estudio para ir más rápido (no hecha): parche 0343 con pausas temporizadas en vez de congelar (`heropause`), para ver varias etapas en un solo arranque.

@@ -41,3 +41,6 @@ Quedan: `17` (tras `arm_vm_physmap_init`), `18` (tras `set_mmu_ttb_alternate`), 
 
 ## Resultado de h17 (E-0077, 2026-11-14)
 **Congeló** con `7: rb: extra banks` y `7: rb: extra banks mapped` y un bloque nuevo al final de la columna (slot 17). **`arm_vm_physmap_init` termina bien.** El reinicio es posterior al bloque 17: quedan `18` (tras `set_mmu_ttb_alternate`, el cambio de TTBR1 a la tabla final), `19` (justo antes de apagar TTBR0) y lo que viene después (sin pantalla: el alias del framebuffer desaparece). Siguiente: **h18**.
+
+## Resultado de h18 (E-0079, E-0080, 2026-11-14)
+**Congeló con el bloque 18 visible** (el Director aclaró: los dos últimos bloques eran cian y marrón chocolate). **`set_mmu_ttb_alternate` se supera**: el kernel ejecuta con la tabla TTBR1 final. El reinicio es posterior al bloque 18. Queda un punto con pantalla: **19** (justo antes de `set_mmu_ttb(invalid_ttep)`, que apaga TTBR0 y el alias del framebuffer). Siguiente: **h19**. Si h19 congela ⇒ el reinicio está **después de apagar TTBR0** (sin pantalla; hace falta un kernel nuevo con un alias del framebuffer en la tabla final); si no congela ⇒ está entre 18 y 19 (`ml_enable_monitor` y poco más).

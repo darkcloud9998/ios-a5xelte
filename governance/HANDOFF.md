@@ -8,7 +8,12 @@ Los informes para el jefe técnico (ChatGPT) usan el mismo formato: se le entreg
 
 ---
 
-## Relevo vigente: H-0036 — h18: observación AMBIGUA, pendiente de aclarar con el Director (2026-11-14)
+## Relevo vigente: H-0037 — h19 ESCRITA (5/8 de la tanda D-0041); teléfono en TWRP, sin reiniciar (2026-11-14)
+- **Tarea en curso: T-0012.** h18 congeló con el bloque 18 visible (E-0079 + aclaración E-0080): `set_mmu_ttb_alternate` se supera. BOOT = `xnu-boot-v2-s7-min7h19-20261114.img` (sha256 `fd1ec365…22a1`), leída de vuelta; EFS intacto (E-0081). Quedan 3 escrituras.
+- **Siguiente (Director):** `adb reboot`, mirar, **contar los bloques y decir el color de los dos últimos**. **Congela** con un bloque nuevo (blanco, slot 19) ⇒ el reinicio es posterior a apagar TTBR0 (hace falta kernel nuevo). **No congela** (azul/cian/magenta + XNU MMU ON) ⇒ el reinicio está entre los bloques 18 y 19.
+- Restaurar BOOT original (E-0009) cubierto por D-0041.
+
+## Relevo anterior: H-0036 — h18: observación AMBIGUA, pendiente de aclarar con el Director (2026-11-14)
 - **Tarea en curso: T-0012** (D-0041, 4/8 usadas). E-0079: "nada nuevo en los stages, solo apareció otro cian abajo del todo".
 - **Aclaración pedida:** ¿cuántos bloques en la columna derecha y de qué color el último (cian como en h17, o marrón chocolate)? ¿quedó congelada? Si es idéntica a h17 y congelada ⇒ el kernel no llega al bloque 18: falla en `set_mmu_ttb_alternate` (cambio a la TTBR1 final). Si hay un marrón nuevo ⇒ siguiente h19.
 - **Diferencia con el kernel del upstream (todo lo que conocemos):** nuestros 0332-0337 no tocan el arranque temprano (0335 solo lee `herosplash`); un kernel upstream (artefacto `kernel-0331-upstream-1c454bf`) con nuestro cargador/ADT/línea sería el contraste limpio; exige decisión nueva (otro kernel no está en D-0041).

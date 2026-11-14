@@ -1179,3 +1179,33 @@ sha256 = "46349250590bf4a484c2ac25d6a8b8f867a27971a79d57902105ca2a3430f383"
 size = 451
 immutable = true
 note = "Transcripción literal; pendiente de aclarar (número de bloques de la columna, color del último, si siguió congelada). Si la pantalla era idéntica a h17 y estaba congelada, el kernel NO llegó a dibujar el bloque 18: se cuelga o falla dentro de/justo tras set_mmu_ttb_alternate. Sin vídeo."
+
+[[evidence]]
+id = "E-0080"
+title = "Aclaración del Director sobre min7h18: los dos últimos bloques eran cian (17) y marrón chocolate (18): congeló con el bloque 18 visible; set_mmu_ttb_alternate se supera"
+kind = "observation"
+path = "/home/pioxi/HackiOS/builds/device-day/phase1-20261114/min7h18-clarification.txt"
+location = "host"
+created = "2026-11-14"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "5646ce9cc93b6fac7d47c5bd99b47d60369c239ee17572b0c67121d5c096fd47"
+size = 340
+immutable = true
+note = "Resuelve la ambigüedad de E-0079 (que no se modifica). Observación a ojo, sin vídeo."
+
+[[evidence]]
+id = "E-0081"
+title = "Tanda D-0041, imagen 5/8: BOOT del S7 escrito con xnu-boot-v2-s7-min7h19-20261114.img y leído de vuelta (sha256 fd1ec365…22a1); EFS idéntico antes y después de la sesión"
+kind = "result"
+path = "/home/pioxi/HackiOS/builds/device-day/phase1-20261114/flash-min7h19-out.txt"
+location = "host"
+created = "2026-11-14"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "e9b68077dd2a7ef47f90480f2470de90b597c342aa60b450221d0b58c55d651a"
+size = 724
+immutable = true
+note = "Solo escritura y lectura de vuelta (D-0041; hash registrado antes en E-0066). Difiere de min7 solo en herostop=19 (diff comprobado)."

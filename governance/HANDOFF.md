@@ -8,7 +8,12 @@ Los informes para el jefe técnico (ChatGPT) usan el mismo formato: se le entreg
 
 ---
 
-## Relevo vigente: H-0038 — h19 CONGELÓ: el reinicio es posterior a apagar TTBR0; kernel nuevo en preparación (2026-11-14)
+## Relevo vigente: H-0039 — kernel 0343 compilado; imágenes min8 listas; PENDIENTE decisión del Director (2026-11-14)
+- **Tarea en curso: T-0012.** CI 43610634539 OK; ci_check: 0343 APLICADO; kernel `ac49a28e…6080`. Imágenes (verificadas, NO escritas): min8 (sin herostop) y min8h20…h27 (E-0083…E-0091).
+- **Necesita:** decisión nueva del Director (D-0041 cubre solo el kernel `4e5f25a5…`): una tanda D-0042 para el kernel `ac49a28e…6080`, con el mismo ADT/cargador/línea de min2 y solo `herostop=N` (N 20-27) como diferencia. Propuesta de orden: **h23** primero; congela ⇒ h25 ⇒ …; no congela ⇒ h21 ⇒ h20/h22 (si ningún bloque ≥20 aparece, h20 comprueba que el alias del framebuffer funciona).
+- El teléfono está en TWRP con h19 escrita. Restaurar BOOT original (E-0009) cubierto por D-0041.
+
+## Relevo anterior: H-0038 — h19 CONGELÓ: el reinicio es posterior a apagar TTBR0; kernel nuevo en preparación (2026-11-14)
 - **Tarea en curso: T-0012** (D-0041, 5/8 usadas, pero el siguiente paso exige un kernel nuevo y por tanto una decisión nueva). Observación E-0082.
 - **Hecho:** parche 0343 (alias virtual del framebuffer tras TTBR0 + bloques 20-27) escrito, aplica sobre 0338-0342; a publicar en `mio` y compilar en CI (D-0030).
 - **Siguiente:** CI → construir imagen (sin herostop y variantes) → pedir al Director autorización con hash del kernel nuevo (D-0041 no lo cubre).

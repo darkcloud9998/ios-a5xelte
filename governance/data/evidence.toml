@@ -1224,3 +1224,138 @@ sha256 = "855418756a6a6dd04d626a62a71d9ef88d2c8333ff87256041d7e2cb4519738e"
 size = 299
 immutable = true
 note = "Sin texto nuevo (las marcas de texto de etapa >7 no se dibujan en la variante A5). Sin vídeo. Fin de la bisección con alias físico del framebuffer: lo que sigue exige dibujar a través de un alias virtual (0343)."
+
+[[evidence]]
+id = "E-0083"
+title = "Imagen preparada (kernel 0343, CI 43610634539): xnu-boot-v2-s7-min8-20261114 = línea de min2; 47 PASS constructor y 57 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run9-min8/xnu-boot-v2-s7-min8-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "fed0a1242186cddf0d87ce30f7c12f38e1183c0f7f3318ac122db40b5aefba23"
+size = 18618384
+immutable = true
+note = "Kernel ac49a28e…6080 (0338-0343; ci_check: 0343 APLICADO), ADT dc817436… y cargador 0a68abbd… como min2-min7. Requiere decisión nueva del Director: D-0041 cubre solo el kernel 4e5f25a5…."
+
+[[evidence]]
+id = "E-0084"
+title = "Imagen preparada (kernel 0343, CI 43610634539): xnu-boot-v2-s7-min8h20-20261114 = línea de min2 herostop=20; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run9-min8/xnu-boot-v2-s7-min8h20-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "b30f5089a4336c9ce9fd22e0abcbc67738015bad1c0d315dd2d92e3ffe3eddf4"
+size = 18618384
+immutable = true
+note = "Kernel ac49a28e…6080 (0338-0343; ci_check: 0343 APLICADO), ADT dc817436… y cargador 0a68abbd… como min2-min7. Requiere decisión nueva del Director: D-0041 cubre solo el kernel 4e5f25a5…."
+
+[[evidence]]
+id = "E-0085"
+title = "Imagen preparada (kernel 0343, CI 43610634539): xnu-boot-v2-s7-min8h21-20261114 = línea de min2 herostop=21; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run9-min8/xnu-boot-v2-s7-min8h21-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "1621850d4d9f9f863137d91286452fe1916b5010603c5c232b17db7524dfa051"
+size = 18618384
+immutable = true
+note = "Kernel ac49a28e…6080 (0338-0343; ci_check: 0343 APLICADO), ADT dc817436… y cargador 0a68abbd… como min2-min7. Requiere decisión nueva del Director: D-0041 cubre solo el kernel 4e5f25a5…."
+
+[[evidence]]
+id = "E-0086"
+title = "Imagen preparada (kernel 0343, CI 43610634539): xnu-boot-v2-s7-min8h22-20261114 = línea de min2 herostop=22; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run9-min8/xnu-boot-v2-s7-min8h22-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "0631dbaeb8ab8ef8725d0a6888527993504ab1c05f868e212cd4423e03cf6520"
+size = 18618384
+immutable = true
+note = "Kernel ac49a28e…6080 (0338-0343; ci_check: 0343 APLICADO), ADT dc817436… y cargador 0a68abbd… como min2-min7. Requiere decisión nueva del Director: D-0041 cubre solo el kernel 4e5f25a5…."
+
+[[evidence]]
+id = "E-0087"
+title = "Imagen preparada (kernel 0343, CI 43610634539): xnu-boot-v2-s7-min8h23-20261114 = línea de min2 herostop=23; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run9-min8/xnu-boot-v2-s7-min8h23-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "493f847835145db923d9977081a9a3425c33fe3a32b5637f732f3e9509a8a8aa"
+size = 18618384
+immutable = true
+note = "Kernel ac49a28e…6080 (0338-0343; ci_check: 0343 APLICADO), ADT dc817436… y cargador 0a68abbd… como min2-min7. Requiere decisión nueva del Director: D-0041 cubre solo el kernel 4e5f25a5…."
+
+[[evidence]]
+id = "E-0088"
+title = "Imagen preparada (kernel 0343, CI 43610634539): xnu-boot-v2-s7-min8h24-20261114 = línea de min2 herostop=24; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run9-min8/xnu-boot-v2-s7-min8h24-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "9cda85d16928e5032866451aa82236dc13b30b5a5a7e892c9f06da96f4ef70e8"
+size = 18618384
+immutable = true
+note = "Kernel ac49a28e…6080 (0338-0343; ci_check: 0343 APLICADO), ADT dc817436… y cargador 0a68abbd… como min2-min7. Requiere decisión nueva del Director: D-0041 cubre solo el kernel 4e5f25a5…."
+
+[[evidence]]
+id = "E-0089"
+title = "Imagen preparada (kernel 0343, CI 43610634539): xnu-boot-v2-s7-min8h25-20261114 = línea de min2 herostop=25; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run9-min8/xnu-boot-v2-s7-min8h25-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "572b00bf607c8bee75d225c73bb92e9a8b4258b00a8d6509e7628ec1fa566db9"
+size = 18618384
+immutable = true
+note = "Kernel ac49a28e…6080 (0338-0343; ci_check: 0343 APLICADO), ADT dc817436… y cargador 0a68abbd… como min2-min7. Requiere decisión nueva del Director: D-0041 cubre solo el kernel 4e5f25a5…."
+
+[[evidence]]
+id = "E-0090"
+title = "Imagen preparada (kernel 0343, CI 43610634539): xnu-boot-v2-s7-min8h26-20261114 = línea de min2 herostop=26; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run9-min8/xnu-boot-v2-s7-min8h26-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "214b291c777f1880a75545e4e2e4b0d1198d6b3f36ec3beb59f72a0f2e70b36c"
+size = 18618384
+immutable = true
+note = "Kernel ac49a28e…6080 (0338-0343; ci_check: 0343 APLICADO), ADT dc817436… y cargador 0a68abbd… como min2-min7. Requiere decisión nueva del Director: D-0041 cubre solo el kernel 4e5f25a5…."
+
+[[evidence]]
+id = "E-0091"
+title = "Imagen preparada (kernel 0343, CI 43610634539): xnu-boot-v2-s7-min8h27-20261114 = línea de min2 herostop=27; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run9-min8/xnu-boot-v2-s7-min8h27-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "ac017394667598fbf3de480dbb02b3b2a7e735f5e1e0ae98b911e050235987ff"
+size = 18618384
+immutable = true
+note = "Kernel ac49a28e…6080 (0338-0343; ci_check: 0343 APLICADO), ADT dc817436… y cargador 0a68abbd… como min2-min7. Requiere decisión nueva del Director: D-0041 cubre solo el kernel 4e5f25a5…."

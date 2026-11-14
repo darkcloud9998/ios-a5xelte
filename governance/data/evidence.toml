@@ -1599,3 +1599,78 @@ sha256 = "9c9837b3201af4c5240398f818779c5c9f8bf3dd61623aec40296d8eaeabe44e"
 size = 530
 immutable = true
 note = "Sin herostop el kernel NO sigue ni reinicia: se queda en el bloque 19. Con los kernels sin alias virtual (0338-0342) el mismo punto terminaba en reinicio; con el alias (0343/0344) termina colgado. Hipótesis más probable: tras apagar TTBR0 algo falla y el dibujo por el alias virtual también (el pánico no se ve), de modo que el kernel se queda en bucle. La sonda 0345 comprueba el alias antes de apagar TTBR0."
+
+[[evidence]]
+id = "E-0108"
+title = "Revisión D-0043 del kernel 2f1372e0…0325 (CI 43615727583, parches 0338-0345): solo diagnóstico de arranque temprano; 0332-0337 intactos; ci_check aplica 0345"
+kind = "result"
+path = "/home/pioxi/HackiOS/builds/device-day/phase1-20261114/review-kernel-0345.txt"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "2ec3e0c3170aee2f2e742e3b946ab8e5f3315e69394d0403e6d50b4979cbbb6b"
+size = 1876
+immutable = true
+note = "Condición (1) de D-0043. Kernel sha256 2f1372e0245a0d72fb7419e5f82655955029776ce0bd768239d72b6731e20325. 0345 escribe solo un píxel del framebuffer por el alias virtual y dibuja bloques."
+
+[[evidence]]
+id = "E-0109"
+title = "Imagen preparada (kernel 0345, CI 43615727583; D-0043): xnu-boot-v2-s7-min10-20261114 = línea de min2; 47 PASS constructor y 57 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run11-min10/xnu-boot-v2-s7-min10-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "a88997bdc2a79a9e84c95cb1dbe14a4be313cb864499d4721afdb653f4403bca"
+size = 18618384
+immutable = true
+note = "Kernel 2f1372e0245a0d72fb7419e5f82655955029776ce0bd768239d72b6731e20325 (revisión E-0108), ADT dc817436… y cargador 0a68abbd… como antes. La línea de arranque difiere de min2 solo en herostop (comprobado)."
+
+[[evidence]]
+id = "E-0110"
+title = "Imagen preparada (kernel 0345, CI 43615727583; D-0043): xnu-boot-v2-s7-min10h20-20261114 = línea de min2 herostop=20; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run11-min10/xnu-boot-v2-s7-min10h20-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "ec983accadd3464584cb13b1c437afd2fc70b6a8918071bf345823460f19b071"
+size = 18618384
+immutable = true
+note = "Kernel 2f1372e0245a0d72fb7419e5f82655955029776ce0bd768239d72b6731e20325 (revisión E-0108), ADT dc817436… y cargador 0a68abbd… como antes. La línea de arranque difiere de min2 solo en herostop (comprobado)."
+
+[[evidence]]
+id = "E-0111"
+title = "Imagen preparada (kernel 0345, CI 43615727583; D-0043): xnu-boot-v2-s7-min10h21-20261114 = línea de min2 herostop=21; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run11-min10/xnu-boot-v2-s7-min10h21-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "57ee9ce6cc77bf83252b8fced829bc076df1a9307485710448a3f8f2299fd5ea"
+size = 18618384
+immutable = true
+note = "Kernel 2f1372e0245a0d72fb7419e5f82655955029776ce0bd768239d72b6731e20325 (revisión E-0108), ADT dc817436… y cargador 0a68abbd… como antes. La línea de arranque difiere de min2 solo en herostop (comprobado)."
+
+[[evidence]]
+id = "E-0112"
+title = "Imagen preparada (kernel 0345, CI 43615727583; D-0043): xnu-boot-v2-s7-min10h22-20261114 = línea de min2 herostop=22; 47 PASS constructor y 58 PASS independiente, 0 FAIL (NO escrita)"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run11-min10/xnu-boot-v2-s7-min10h22-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "2616da80f9d5ea4b99b2c80006f8d70bc505ea07a436ed49db5f2e70bf8f6d31"
+size = 18618384
+immutable = true
+note = "Kernel 2f1372e0245a0d72fb7419e5f82655955029776ce0bd768239d72b6731e20325 (revisión E-0108), ADT dc817436… y cargador 0a68abbd… como antes. La línea de arranque difiere de min2 solo en herostop (comprobado)."

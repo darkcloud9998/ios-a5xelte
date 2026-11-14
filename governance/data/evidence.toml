@@ -1749,3 +1749,18 @@ sha256 = "726c23297526f5fa07c8f7d33bcfad61f45cf5d62842b1328822f9da04632fce"
 size = 724
 immutable = true
 note = "Solo escritura y lectura de vuelta. El primer intento y el segundo se cortaron antes de escribir porque adb no veía el teléfono (reenumeración USB); se repitió con TWRP visible. Condiciones de D-0043 cumplidas: revisión E-0115, hash en E-0116, cmdline = min2."
+
+[[evidence]]
+id = "E-0118"
+title = "Observación de min11 (foto transcrita por ChatGPT): estado de traducción A5V (TTBR1=cpu_ttep=0x882532000, TCR 4 KiB/T1SZ=25, L1e tabla válida, L2e bloque 2 MiB PA 0xe2a00000, PAR F=0 Normal-NC) y el mismo pánico de min10"
+kind = "observation"
+path = "/home/pioxi/HackiOS/builds/device-day/phase1-20261114/min11-observation.txt"
+location = "host"
+created = "2026-11-14"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "438dd18d9c826153a4bb0e593e1fe6efd098a419a031a38367c9992ddb4309ba"
+size = 681
+immutable = true
+note = "Valores transcritos por IA de una foto no archivada, pero MUTUAMENTE COHERENTES al decodificarlos (TTBR1 = cpu_ttep; L1e apunta a una tabla en RAM del banco 2; L2e es un bloque alineado a 2 MiB cuyo PA coincide con el del PAR; PAR atributo 0x44). El VA está mal leído. Conclusión del análisis: el kernel traduce con granularidad de 4 KiB (bloque L2 = 2 MiB), no 16 KiB como supuso mi parche 0343."

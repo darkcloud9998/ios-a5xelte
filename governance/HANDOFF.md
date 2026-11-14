@@ -8,7 +8,12 @@ Los informes para el jefe técnico (ChatGPT) usan el mismo formato: se le entreg
 
 ---
 
-## Relevo vigente: H-0048 — min11 (kernel 0346, sin herostop) ESCRITA (D-0043, 4/20); teléfono en TWRP, sin reiniciar (2026-11-14)
+## Relevo vigente: H-0049 — min11: el alias mapeaba solo 2 MiB (granularidad de 4 KiB); parche 0347 (8 bloques) en CI (2026-11-14)
+- **Tarea en curso: T-0012.** E-0118 + docs/S7GE_MIN11_RESULT.md: TG0/TG1 = 4 KiB, L2 = bloque de 2 MiB; el alias cubría las primeras ~364 filas; la sonda en la fila 1500 cayó fuera ⇒ fallo ⇒ pánico secundario en vm_fault.
+- **Hecho:** 0347 (mapea 8 bloques de 2 MiB); publicado en `mio`; CI en curso. Luego: revisión D-0043, imagen min12 (sin herostop) y escribirla (D-0043: 4/20 usadas).
+- **Teléfono:** en TWRP con min11. Restaurar BOOT original (E-0009) cubierto por D-0043.
+
+## Relevo anterior: H-0048 — min11 (kernel 0346, sin herostop) ESCRITA (D-0043, 4/20); teléfono en TWRP, sin reiniciar (2026-11-14)
 - **Tarea en curso: T-0012.** BOOT = `xnu-boot-v2-s7-min11-20261114.img` (sha256 `483bb381…685c`); EFS intacto (E-0117). Revisión del kernel E-0115; imagen E-0116.
 - **Qué mirar (Director, tras `adb reboot`):** tras los cuatro `rb:`, líneas `A5V TTBR1=0x… / TCR / cpu_ttep / VA / L1e / L2e / PAR` (copiarlas literales), y el bloque 20 (VERDE = alias válido, ROJO = no). Si el alias es válido, el kernel sigue y se verán bloques 21+. Si no, queda parado con los números en pantalla.
 - Restaurar BOOT original (E-0009) cubierto por D-0043.

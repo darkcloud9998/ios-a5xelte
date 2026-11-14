@@ -1689,3 +1689,18 @@ sha256 = "905bd8769a2d76df6a590fdeb51dfcd6cec2ce0606d64c0bf903415ccd699d2e"
 size = 724
 immutable = true
 note = "Solo escritura y lectura de vuelta. Condiciones de D-0043 cumplidas antes de escribir: revisión E-0108, hash en evidencias (E-0109), cmdline = min2 (diff)."
+
+[[evidence]]
+id = "E-0114"
+title = "Observación de min10: A5 XNU PANIC 'Invalid kernel stack pointer (probably corruption)' en pc 0xfffffff007378904 (_vm_fault_internal+0x24), lr …844 (_vm_fault+0x14); FAR 0x9e, ESR 0x96000005; bloques hasta el 19, sin 20+"
+kind = "observation"
+path = "/home/pioxi/HackiOS/builds/device-day/phase1-20261114/min10-observation.txt"
+location = "host"
+created = "2026-11-14"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "bcf16c0971d25e13428a3a3b94a5cf113eeb2175dd03aebe1c2f8189af93233c"
+size = 839
+immutable = true
+note = "PC y LR simbolizados con el kernel que corría (CI 43615727583): _vm_fault_internal+0x24 y _vm_fault+0x14. FAR=0x9e y ESR 0x96000005 (EC 0x25 aborto de datos en EL1, DFSC 0x05 = fallo de traducción nivel 1 en TTBR0): es una desreferencia de NULL+0x9e DENTRO de vm_fault, es decir, el SEGUNDO fallo. El primero (que entró en vm_fault sin hilo actual) no se ve. Valores de registros por IA a partir de fotos: no verificados."

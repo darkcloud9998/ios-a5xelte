@@ -8,7 +8,13 @@ Los informes para el jefe técnico (ChatGPT) usan el mismo formato: se le entreg
 
 ---
 
-## Relevo vigente: H-0028 — min6 ESCRITA (D-0039) y verificada; el teléfono está en TWRP, SIN reiniciar (2026-11-14)
+## Relevo vigente: H-0029 — tanda D-0041 (imagen 1/8: min7h08, herostop=8) ESCRITA; teléfono en TWRP, SIN reiniciar (2026-11-14)
+- **Hecho:** kernel CI 43603366417 (0338-0342, sha256 `4e5f25a5…4d6f`), imagen `xnu-boot-v2-s7-min7h08-20261114.img` (sha256 `0bb5e7a6…a37ff`), leída de vuelta; EFS intacto (E-0059, E-0060). Quedan 7 imágenes de la tanda.
+- **Canal de RAM:** `/dev/mem` imposible (TWRP sin CONFIG_DEVMEM); el contador de 0342 no se puede leer desde TWRP. Alternativa pendiente de pensar (no hecha): breadcrumbs dentro de una región que TWRP exponga.
+- **Siguiente (Director):** grabar, `adb reboot`, ≥ 2 min. **Resultado esperado:** pantalla CONGELADA con la columna derecha (x≈1300) de 9 bloques (0-8) si el kernel llega al bloque 8; si se ve el reinicio de siempre (azul/cian/magenta + XNU MMU ON, sin columna), el reinicio ocurre antes del bloque 8. Luego yo decido el siguiente N (bisección 12 / 16 / 19) y construyo la imagen en el PC.
+- Restaurar BOOT original (E-0009) cubierto por D-0041.
+
+## Relevo anterior: H-0028 — min6 ESCRITA (D-0039) y verificada; el teléfono está en TWRP, SIN reiniciar (2026-11-14)
 - **Hecho:** el Director firmó (D-0039) tras ver el hash. BOOT = `xnu-boot-v2-s7-min6-20261114.img` (sha256 `4f412a5b…29b43`), leído de vuelta igual; EFS intacto dentro de la sesión (E-0056). Nada más escrito.
 - **Tarea en curso: T-0012.** Siguiente (Director): grabar en cámara lenta encuadrando la **columna derecha** (x≈1300), `adb reboot`, ≥ 2 min; contar de arriba abajo los bloques (hasta 20) y capturar el último fotograma antes de que la pantalla vuelva a "azul, cian, magenta, XNU MMU ON". Si no arranca: Vol− + Power ~7 s y Vol+ + Home + Power.
 - **Lectura:** último bloque = última fase alcanzada (`S7GE_MIN6_ANALYSIS.md`, `S7GE_ARM_VM_INIT_ANALYSIS.md` §4). Restaurar el BOOT original (E-0009) está cubierto por D-0039. Lectura `/dev/mem` NO autorizada (D-0038 solo cubrió last_kmsg/iomem, ya hechas, E-0054).

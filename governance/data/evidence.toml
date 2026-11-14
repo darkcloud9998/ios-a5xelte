@@ -1584,3 +1584,18 @@ sha256 = "195d2684e6b7b22733798a213ea16c52b566d66a0666864ee1fffd118cef552f"
 size = 722
 immutable = true
 note = "Solo escritura y lectura de vuelta. Se escribe SIN herostop para separar 'colgado entre el bloque 19 y el 20' de 'el kernel avanza pero el dibujo por el alias virtual no se ve'."
+
+[[evidence]]
+id = "E-0107"
+title = "Observación de min9 (Director, sin herostop): la pantalla queda congelada como h19, con texto hasta los 4 'rb:' y bloques hasta el 19; sin pánico, sin bloques 20+ y sin pasar al estado de reinicio"
+kind = "observation"
+path = "/home/pioxi/HackiOS/builds/device-day/phase1-20261114/min9-observation.txt"
+location = "host"
+created = "2026-11-14"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "9c9837b3201af4c5240398f818779c5c9f8bf3dd61623aec40296d8eaeabe44e"
+size = 530
+immutable = true
+note = "Sin herostop el kernel NO sigue ni reinicia: se queda en el bloque 19. Con los kernels sin alias virtual (0338-0342) el mismo punto terminaba en reinicio; con el alias (0343/0344) termina colgado. Hipótesis más probable: tras apagar TTBR0 algo falla y el dibujo por el alias virtual también (el pánico no se ve), de modo que el kernel se queda en bucle. La sonda 0345 comprueba el alias antes de apagar TTBR0."

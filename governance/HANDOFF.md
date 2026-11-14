@@ -8,7 +8,12 @@ Los informes para el jefe técnico (ChatGPT) usan el mismo formato: se le entreg
 
 ---
 
-## Relevo vigente: H-0044 — min9 (kernel 0344, sin herostop) ESCRITA (D-0043, 2/20); teléfono en TWRP, sin reiniciar (2026-11-14)
+## Relevo vigente: H-0045 — min9 (sin herostop) quedó colgada en el bloque 19; parche 0345 (sonda del alias) en CI (2026-11-14)
+- **Tarea en curso: T-0012.** E-0107: sin herostop y con 0344 la pantalla se congela como h19 (sin reinicio, sin pánico). Con kernels sin alias (0338-0342) acababa en reinicio.
+- **Hecho:** 0345 escrito (aplica; pasa la lista blanca de D-0043): sonda del alias VA↔PA antes de apagar TTBR0 (bloque 20: verde = ok, rojo = distinta memoria; 21: dibujo por el alias con TTBR0 vivo); bloques posteriores renumerados 22-29. Publicado en `mio`; CI en curso. Luego: revisión D-0043 (evidencia), imágenes min10 (sin herostop y variantes 20…29) y escribirlas.
+- **Teléfono:** en TWRP con min9. Restaurar BOOT original (E-0009) cubierto por D-0043.
+
+## Relevo anterior: H-0044 — min9 (kernel 0344, sin herostop) ESCRITA (D-0043, 2/20); teléfono en TWRP, sin reiniciar (2026-11-14)
 - **Tarea en curso: T-0012.** E-0105: con herostop=23 la pantalla quedó como en h19 (4 `rb:` y bloques hasta el 19; sin pánico ni bloques 20-23). BOOT = `xnu-boot-v2-s7-min9-20261114.img` (sha256 `501b889e…409e`), leída de vuelta; EFS intacto (E-0106).
 - **Qué distingue min9:** si la pantalla acaba en el **estado de reinicio** (azul/cian/magenta + XNU MMU ON, sin texto) ⇒ el kernel NO se cuelga entre 19 y 20: avanza y el freeze de h23 era real pero el dibujo por el alias no se ve (el alias no funciona: revisar atributos/offset). Si acaba **congelada como h19** (texto + 19 bloques) ⇒ el kernel se cuelga justo al apagar TTBR0 o al dibujar por el alias (siguiente: prueba previa a TTBR0 off con lectura cruzada alias VA ↔ PA).
 - Restaurar BOOT original (E-0009) cubierto por D-0043.

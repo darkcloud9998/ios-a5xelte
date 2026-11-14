@@ -864,3 +864,18 @@ sha256 = "66868977473468b3166b13f29ec76e7e4f601c084625369e55acac9a03cbca23"
 size = 18618384
 immutable = true
 note = "Kernel 4e5f25a5d9d72787225b8b1425eda9831d8c9e07b2017447d71c632d12764d6f (ci_check: 0341 y 0342 APLICADO). ADT y cmdline.txt idénticos a min2. Primera imagen de la tanda D-0041 (sin herostop). Cambia solo el kernel respecto a min6."
+
+[[evidence]]
+id = "E-0059"
+title = "Imagen 1 de la tanda D-0041: min7h08 = min7 + herostop=8 (congela la CPU tras el bloque 8, fin de arm_init 6c); 47 PASS constructor y 58 PASS independiente, 0 FAIL"
+kind = "image"
+path = "/home/pioxi/HackiOS/builds/device-day/boot-candidates-n2-run8-min7/xnu-boot-v2-s7-min7h08-20261114.img"
+location = "host"
+created = "2026-11-14"
+domain = "host"
+level = "L2"
+device = "none"
+sha256 = "0bb5e7a6f92687fbc6c83ecd7c71d080f5d63c0f073040190bd9550c388a37ff"
+size = 18618384
+immutable = true
+note = "Mismo kernel, ADT y cargador que E-0058; la línea de arranque difiere solo en herostop=8 (comprobado con diff). Hash registrado antes de escribirla (D-0041). Si la pantalla se congela con los bloques 0-8 en la columna x=1300, la ejecución llegó al bloque 8."

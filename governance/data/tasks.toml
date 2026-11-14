@@ -479,6 +479,6 @@ actions = ["device-read"]
 acceptance = "Resultado archivado con hash fuera de git; sin escritura en el teléfono; si /dev/mem no existe se informa al Director antes de usar otro método."
 evidence = []
 min_evidence = { level = "L2", device = "this-unit" }
-requires_decisions = ["D-0038"]
-authorization_ref = "D-0038"
+requires_decisions = ["D-0038", "D-0040"]
+authorization_ref = "D-0040"
 resume = "D-0038 cubre solo lectura de RAM alrededor de 0x8ffff100 (máx. 1 MiB). TWRP no tiene /dev/mem; /proc/last_kmsg existe. Preguntar al Director antes de crear /dev/mem con mknod."

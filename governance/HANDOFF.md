@@ -8,7 +8,12 @@ Los informes para el jefe técnico (ChatGPT) usan el mismo formato: se le entreg
 
 ---
 
-## Relevo vigente: H-0045 — min9 (sin herostop) quedó colgada en el bloque 19; parche 0345 (sonda del alias) en CI (2026-11-14)
+## Relevo vigente: H-0046 — min10 (kernel 0345, sin herostop) ESCRITA (D-0043, 3/20); teléfono en TWRP, sin reiniciar (2026-11-14)
+- **Tarea en curso: T-0012.** BOOT = `xnu-boot-v2-s7-min10-20261114.img` (sha256 `a88997bd…03bca`); EFS intacto (E-0113). Revisión del kernel E-0108; imágenes: E-0109 (sin herostop), E-0110/0111/0112 (h20, h21, h22).
+- **Qué mirar (Director, tras `adb reboot`):** columna derecha tras el bloque 19: **bloque 20 = veredicto de la sonda (VERDE: el alias virtual ve la misma memoria que el físico; ROJO: no)**, **bloque 21 dibujado por el alias con TTBR0 vivo**, luego 22+ (tras apagar TTBR0). Posibles finales: texto de `A5 XNU PANIC` (transcribir literal), pantalla de reinicio, o congelada.
+- Restaurar BOOT original (E-0009) cubierto por D-0043.
+
+## Relevo anterior: H-0045 — min9 (sin herostop) quedó colgada en el bloque 19; parche 0345 (sonda del alias) en CI (2026-11-14)
 - **Tarea en curso: T-0012.** E-0107: sin herostop y con 0344 la pantalla se congela como h19 (sin reinicio, sin pánico). Con kernels sin alias (0338-0342) acababa en reinicio.
 - **Hecho:** 0345 escrito (aplica; pasa la lista blanca de D-0043): sonda del alias VA↔PA antes de apagar TTBR0 (bloque 20: verde = ok, rojo = distinta memoria; 21: dibujo por el alias con TTBR0 vivo); bloques posteriores renumerados 22-29. Publicado en `mio`; CI en curso. Luego: revisión D-0043 (evidencia), imágenes min10 (sin herostop y variantes 20…29) y escribirlas.
 - **Teléfono:** en TWRP con min9. Restaurar BOOT original (E-0009) cubierto por D-0043.

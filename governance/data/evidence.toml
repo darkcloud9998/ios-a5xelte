@@ -1674,3 +1674,18 @@ sha256 = "2616da80f9d5ea4b99b2c80006f8d70bc505ea07a436ed49db5f2e70bf8f6d31"
 size = 18618384
 immutable = true
 note = "Kernel 2f1372e0245a0d72fb7419e5f82655955029776ce0bd768239d72b6731e20325 (revisión E-0108), ADT dc817436… y cargador 0a68abbd… como antes. La línea de arranque difiere de min2 solo en herostop (comprobado)."
+
+[[evidence]]
+id = "E-0113"
+title = "Tanda amplia D-0043, imagen 3: BOOT del S7 escrito con xnu-boot-v2-s7-min10-20261114.img (kernel 0345, sin herostop) y leído de vuelta (sha256 a88997bd…03bca); EFS idéntico antes y después de la sesión"
+kind = "result"
+path = "/home/pioxi/HackiOS/builds/device-day/phase1-20261114/flash-min10-out.txt"
+location = "host"
+created = "2026-11-14"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "905bd8769a2d76df6a590fdeb51dfcd6cec2ce0606d64c0bf903415ccd699d2e"
+size = 724
+immutable = true
+note = "Solo escritura y lectura de vuelta. Condiciones de D-0043 cumplidas antes de escribir: revisión E-0108, hash en evidencias (E-0109), cmdline = min2 (diff)."

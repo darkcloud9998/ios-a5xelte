@@ -445,6 +445,30 @@ migration_restore(void)
  */
 /* A logging profile for the Files stack: Subsystems/<name>.plist asks for debug level, persisted and with the private
  * arguments readable (Enable-Private-Data). Whether this build of libtrace honours it is what this tries (E-0416). */
+/* mkdir.list: folders to create empty, once, owned by mobile. Only inside an app-group container, and only a folder
+ * whose parent already exists (Director's approval, 2026-11-22: "File Provider Storage" for Files' local provider). */
+static void
+make_listed_dirs(void)
+{
+   FILE *f = fopen(DROP_DIR "mkdir.list", "r");
+   char line[512];
+   static const char prefix[] = "/private/var/mobile/Containers/Shared/AppGroup/";
+   while (f && fgets(line, sizeof(line), f)) {
+      line[strcspn(line, "\r\n")] = 0;
+      if (strncmp(line, prefix, sizeof(prefix) - 1) != 0 || strstr(line, "..") != NULL) {
+         continue;
+      }
+      if (mkdir(line, 0755) == 0) {
+         chown(line, 501, 501);
+         herodrm_log("hero-run: mkdir %s: made", line);
+      } else {
+         herodrm_log("hero-run: mkdir %s: %s", line, strerror(errno));
+      }
+   }
+   if (f)
+      fclose(f);
+}
+
 static void
 write_logging_plists(void)
 {
@@ -1814,6 +1838,7 @@ main(int main_argc, char **main_argv)
    migration_restore();
    disable_refused_jobs();
    write_logging_plists();
+   make_listed_dirs();
    census_fd = open(DROP_DIR "census.out", O_RDWR | O_CREAT | O_TRUNC, 0644);
    pid_t census = fork();
    if (census == 0) {

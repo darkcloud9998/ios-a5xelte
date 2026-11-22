@@ -455,10 +455,11 @@ make_listed_dirs(void)
    static const char prefix[] = "/private/var/mobile/Containers/Shared/AppGroup/";
    while (f && fgets(line, sizeof(line), f)) {
       line[strcspn(line, "\r\n")] = 0;
-      if (strncmp(line, prefix, sizeof(prefix) - 1) != 0 || strstr(line, "..") != NULL) {
+      bool cloud = strcmp(line, "/private/var/mobile/Library/CloudStorage") == 0;   /* Director, 2026-11-22 */
+      if ((!cloud && strncmp(line, prefix, sizeof(prefix) - 1) != 0) || strstr(line, "..") != NULL) {
          continue;
       }
-      if (mkdir(line, 0755) == 0) {
+      if (mkdir(line, cloud ? 0700 : 0755) == 0) {
          chown(line, 501, 501);
          herodrm_log("hero-run: mkdir %s: made", line);
       } else {

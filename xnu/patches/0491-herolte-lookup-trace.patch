@@ -1,0 +1,52 @@
+herolte: herolookup=<process> prints the paths a process looks up (0491)
+
+A diagnostic for failures that only say "The file doesn't exist": with the boot-arg herolookup=fileproviderd the MAC lookup-preflight hook prints each path that process looks up (the first 8000, 200 characters each) as HEROLOOKUP lines in the kernel log, to be checked against the disk. Off by default.
+
+--- a/bsd/kern/sweet_amfi.c
++++ b/bsd/kern/sweet_amfi.c
+@@ -24,6 +24,7 @@
+  */
+ #if defined(ARM64_BOARD_CONFIG_SWEET) || defined(ARM64_BOARD_CONFIG_A5XELTE)
+ #include <kern/debug.h>
++#include <pexpert/pexpert.h>
+ #include <kern/startup.h>
+ #include <libkern/amfi/amfi.h>
+ #include <mach/kern_return.h>
+@@ -391,8 +392,37 @@
+ 	}
+ }
+ 
++/*
++ * 0491: boot-arg herolookup=<process name>: every path that process looks up is printed (the first 8000), so that a
++ * failure that only says "The file doesn't exist" (Files' setEnabled, E-0419) can be traced to the missing path by
++ * checking each one against the disk. Off by default.
++ */
++static int
++sweet_amfi_lookup_preflight(__unused kauth_cred_t cred, __unused struct vnode *dvp, __unused struct label *dlabel,
++    const char *path, size_t pathlen)
++{
++	static char want[32];
++	static int state;       /* 0 not read, 1 on, -1 off */
++	static unsigned logged;
++	if (state == 0) {
++		state = PE_parse_boot_argn("herolookup", want, sizeof(want)) ? 1 : -1;
++	}
++	if (state < 0 || logged >= 8000 || path == NULL || pathlen == 0) {
++		return 0;
++	}
++	char name[32];
++	proc_name(proc_pid(current_proc()), name, sizeof(name));
++	if (strncmp(name, want, sizeof(name)) != 0) {
++		return 0;
++	}
++	logged++;
++	printf("HEROLOOKUP %s: %.*s\n", name, (int)(pathlen > 200 ? 200 : pathlen), path);
++	return 0;
++}
++
+ static const struct mac_policy_ops sweet_amfi_mac_ops = {
+ 	.mpo_vnode_check_signature = sweet_amfi_vnode_check_signature,
++	.mpo_vnode_check_lookup_preflight = sweet_amfi_lookup_preflight,
+ };
+ 
+ /*

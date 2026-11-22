@@ -6186,3 +6186,18 @@ sha256 = "16e65c087a5458f894d75903ab73da8c2b63893cb46646c17eb16ca6bd4645f1"
 size = 703
 immutable = true
 note = "salida del flasher de min135 (scratch)."
+
+[[evidence]]
+id = "E-0421"
+title = "RASTREO DE RUTAS, PRIMER INTENTO INSUFICIENTE (el Director: 'still doesnt work'; min135): el kernel imprimió solo 45 líneas HEROLOOKUP fileproviderd y casi todas truncadas ('/ / pri'): el gancho lookup_preflight se llama UNA vez por búsqueda de ruta completa (y otra por enlace simbólico), no por componente, y el parche 0491 imprimía solo 'pathlen' (la longitud del primer componente) en vez de la ruta; CORREGIDO: se imprime la ruta entera (strnlen 200); kernel CI 45052.. (la segunda compilación del 0491, success, suma coincide) -> min136 (misma línea de arranque que min135, 603 caracteres), sha256 56d3312c5cb6f13b05c16b4d7bd0bd3444717f05e40ddda09b90b1ac8a3e80b7, verificador 36 PASS 0 FAIL, escrita y leída de vuelta, EFS intacto; LÍMITE CONOCIDO: solo se ven las búsquedas que hace fileproviderd; si setEnabled falla por algo que busca otro proceso, no saldrá; contadores D-0123: BOOT 28 de 80, DROP 65 de 80"
+kind = "log"
+path = "/tmp/herolte-work/f136.txt"
+location = "scratch"
+created = "2026-11-22"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "b7d99fe43d4169e20d58d752be93d8f5f4272a6df1531cbf561851ad2c53ad63"
+size = 703
+immutable = true
+note = "salida del flasher de min136 (scratch)."

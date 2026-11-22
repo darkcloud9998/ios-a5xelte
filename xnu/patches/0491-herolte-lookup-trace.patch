@@ -12,7 +12,7 @@ A diagnostic for failures that only say "The file doesn't exist": with the boot-
  #include <kern/startup.h>
  #include <libkern/amfi/amfi.h>
  #include <mach/kern_return.h>
-@@ -391,8 +392,37 @@
+@@ -391,8 +392,44 @@
  	}
  }
  
@@ -22,7 +22,7 @@ A diagnostic for failures that only say "The file doesn't exist": with the boot-
 + * checking each one against the disk. Off by default.
 + */
 +static int
-+sweet_amfi_lookup_preflight(__unused kauth_cred_t cred, __unused struct vnode *dvp, __unused struct label *dlabel,
++sweet_amfi_lookup_preflight(__unused kauth_cred_t cred, struct vnode *dvp, __unused struct label *dlabel,
 +    const char *path, size_t pathlen)
 +{
 +	static char want[32];
@@ -40,7 +40,14 @@ A diagnostic for failures that only say "The file doesn't exist": with the boot-
 +		return 0;
 +	}
 +	logged++;
-+	printf("HEROLOOKUP %s: %.*s\n", name, (int)(pathlen > 200 ? 200 : pathlen), path);
++	/* the hook is called for each component: the directory it is looked up in, then the name */
++	char dir[180];
++	int dlen = (int)sizeof(dir);
++	dir[0] = 0;
++	if (dvp == NULL || vn_getpath(dvp, dir, &dlen) != 0) {
++		strlcpy(dir, "?", sizeof(dir));
++	}
++	printf("HEROLOOKUP %s: %s / %.*s\n", name, dir, (int)(pathlen > 100 ? 100 : pathlen), path);
 +	return 0;
 +}
 +

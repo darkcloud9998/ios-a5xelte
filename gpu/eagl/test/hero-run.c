@@ -1719,6 +1719,92 @@ haptics_probe(__unused void *unused)
 typedef int (*proc_listallpids_fn)(void *, int);
 typedef int (*proc_pid_rusage_fn)(int, int, void *);
 typedef int (*proc_name_fn)(int, void *, uint32_t);
+/* Power sampler: every 30 s the battery (IOPMPowerSource: current, voltage, percent) and where the CPU time went
+ * (the processes' user + system time since the last round), appended to /private/var/tmp/hero-power.txt and logged.
+ * For the idle-cost measurement that H3 (Bluetooth, camera, haptics) depends on (E-0424). pow.off in the drop stops it. */
+typedef uint32_t (*io_matching_fn)(uint32_t, CFDictionaryRef);
+static void *
+power_sampler(void *unused)
+{
+   (void)unused;
+   void *io = dlopen("/System/Library/Frameworks/IOKit.framework/IOKit", RTLD_LAZY);
+   CFDictionaryRef (*matching)(const char *) = io ? dlsym(io, "IOServiceMatching") : NULL;
+   uint32_t (*get_service)(uint32_t, CFDictionaryRef) = io ? dlsym(io, "IOServiceGetMatchingService") : NULL;
+   CFTypeRef (*get_prop)(uint32_t, CFStringRef, CFAllocatorRef, uint32_t) = io ? dlsym(io, "IORegistryEntryCreateCFProperty") : NULL;
+   proc_listallpids_fn list_p = (proc_listallpids_fn)dlsym(RTLD_DEFAULT, "proc_listallpids");
+   proc_pid_rusage_fn rus_p = (proc_pid_rusage_fn)dlsym(RTLD_DEFAULT, "proc_pid_rusage");
+   proc_name_fn name_p = (proc_name_fn)dlsym(RTLD_DEFAULT, "proc_name");
+   if (!matching || !get_service || !get_prop || !list_p || !rus_p || !name_p) {
+      herodrm_log("hero-run: power: functions not found: sampler off");
+      return NULL;
+   }
+   mach_timebase_info_data_t tb;
+   mach_timebase_info(&tb);
+   enum { SLOTS = 2048 };
+   static struct { int pid; uint64_t t; } prev[SLOTS];
+   static int pids[1024];
+   for (;;) {
+      sleep(30);
+      if (access(DROP_DIR "pow.off", F_OK) == 0)
+         continue;
+      long amp = 0, volt = 0, pct = -1, ext = -1;
+      uint32_t svc = get_service(0, matching("IOPMPowerSource"));
+      if (svc) {
+         struct { const char *k; long *v; } keys[] = { { "InstantAmperage", &amp }, { "Voltage", &volt }, { "CurrentCapacity", &pct }, { "ExternalConnected", &ext } };
+         for (int k = 0; k < 4; k++) {
+            CFTypeRef r = get_prop(svc, CFStringCreateWithCString(NULL, keys[k].k, kCFStringEncodingUTF8), NULL, 0);
+            if (r) {
+               long long x = 0;
+               if (CFGetTypeID(r) == CFNumberGetTypeID() && CFNumberGetValue(r, kCFNumberSInt64Type, &x))
+                  *keys[k].v = (long)x;
+               else if (CFGetTypeID(r) == CFBooleanGetTypeID())
+                  *keys[k].v = CFBooleanGetValue(r) ? 1 : 0;
+               CFRelease(r);
+            }
+         }
+      }
+      if (amp > 2147483647L)
+         amp -= 4294967296L;     /* the kernel publishes a signed value as a UInt32 */
+      int n = list_p(pids, sizeof(pids));
+      uint64_t total_ns = 0;
+      struct { int pid; uint64_t ms; char name[20]; } top[4] = { { 0 } };
+      for (int i = 0; i < n; i++) {
+         struct rusage_info_v2 ri;
+         if (pids[i] <= 0 || rus_p(pids[i], RUSAGE_INFO_V2, &ri) != 0)
+            continue;
+         uint64_t t = (ri.ri_user_time + ri.ri_system_time) * tb.numer / tb.denom;
+         int slot = pids[i] % SLOTS;
+         uint64_t d = prev[slot].pid == pids[i] && t >= prev[slot].t ? t - prev[slot].t : 0;
+         prev[slot].pid = pids[i];
+         prev[slot].t = t;
+         total_ns += d;
+         uint64_t ms = d / 1000000;
+         for (int k = 0; k < 4; k++) {
+            if (ms > top[k].ms) {
+               for (int m = 3; m > k; m--)
+                  top[m] = top[m - 1];
+               top[k].pid = pids[i];
+               top[k].ms = ms;
+               name_p(pids[i], top[k].name, sizeof(top[k].name));
+               break;
+            }
+         }
+      }
+      char line[360];
+      int off = snprintf(line, sizeof(line), "hero-run: power: %ld mA %ld mV %ld%% ext=%ld; cpu %llu ms of 30000 (8 cores = %llu%%); top:", amp, volt, pct, ext,
+                         (unsigned long long)(total_ns / 1000000), (unsigned long long)(total_ns / 1000000 * 100 / (30000ull * 8)));
+      for (int k = 0; k < 4 && top[k].ms; k++)
+         off += snprintf(line + off, sizeof(line) - (size_t)off, " %s[%d] %llu ms", top[k].name, top[k].pid, (unsigned long long)top[k].ms);
+      herodrm_log("%s", line);
+      FILE *f = fopen("/private/var/tmp/hero-power.txt", "a");
+      if (f) {
+         fprintf(f, "%ld %s\n", (long)time(NULL), line);
+         fclose(f);
+      }
+   }
+   return NULL;
+}
+
 static void *
 memory_sampler(void *unused)
 {
@@ -1864,6 +1950,9 @@ main(int main_argc, char **main_argv)
    pthread_t devices;
    if (pthread_create(&devices, NULL, devices_start, NULL) == 0)
       pthread_detach(devices);
+   pthread_t power;
+   if (pthread_create(&power, NULL, power_sampler, NULL) == 0)
+      pthread_detach(power);
    pthread_t memory;
    if (pthread_create(&memory, NULL, memory_sampler, NULL) == 0)
       pthread_detach(memory);

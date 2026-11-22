@@ -6096,3 +6096,18 @@ sha256 = "f8bb3e2d1b779633d5b19a54823d725c185aa6cb0cb7fea234e8d733f1de4332"
 size = 703
 immutable = true
 note = "salida del flasher para min133 (scratch)."
+
+[[evidence]]
+id = "E-0415"
+title = "BRILLO FUNCIONA (min133, arranque con 0490): el servicio 'HEROLTE BRIGHT: AppleARMBacklight published under the display' se publica; iOS le envía niveles ('255 -> 180 (backlight)' al arrancar, subida suave 180 -> 246 con el brillo automático, bajada 245 -> 139 al mover el deslizador, hasta '70 -> 64' = el suelo); 66 líneas de cambio; sin pánico; el Director arrancó y volvió a TWRP sin fallo de dibujo; ESTÁ POR CONFIRMAR POR EL DIRECTOR que la pantalla se veía más o menos brillante de verdad (el nivel llega a la copia de la GPU, la medida visible es suya); único fallo en el registro: un CollectionsPoster sig9 (conocido, sin efecto); contadores D-0123: BOOT 25 de 80, DROP 62 de 80"
+kind = "log"
+path = "/tmp/herolte-work/ios-crashes/log-n40.txt"
+location = "scratch"
+created = "2026-11-22"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "e0f2f8835e99724d140d53798a6271690875ff423d91b335dad841ebfed1482d"
+size = 428245
+immutable = true
+note = "registro del kernel del arranque de min133 (scratch)."

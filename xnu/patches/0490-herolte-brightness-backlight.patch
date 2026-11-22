@@ -1,0 +1,163 @@
+herolte: panel brightness through a backlight service and the GPU copy blend (0490)
+
+From upstream Note FE 0419/0420/0343 (the parts for brightness only; the rest of 0342 stays held back). An AppleARMBacklight child of the display with IODisplayParameters (brightness 0-65536; boot-arg herobl=0 publishes none) receives what CoreBrightness sets; notefe_brightness_set() maps it (square root, light is about level^2.2 on this AMOLED), with a floor of 64 of 255 (herobrightmin=N, 12-255) because without a light sensor auto-brightness asks for 1 and the screen turns black. The GPU copy to the panel multiplies every pixel by level/255 through the blend constant (255: exactly the copy as before). Cost: the screen never goes below 25 percent.
+
+--- a/bsd/dev/herolte_gpu.c
++++ b/bsd/dev/herolte_gpu.c
+@@ -2021,6 +2021,33 @@
+  * the rect to the point of coherency. False if the GPU failed (the caller
+  * falls back to the CPU copy).
+  */
++/* The panel's brightness, 255 = as drawn. Set by the backlight service (SweetFramebuffer.cpp). */
++static volatile uint32_t notefe_bright_level = 255;
++
++void notefe_brightness_set(uint32_t level, const char *why);
++void
++notefe_brightness_set(uint32_t level, const char *why)
++{
++	static uint32_t logged, floor_level;
++	if (level > 255) {
++		level = 255;
++	}
++	/* A floor that stays readable (0343): with no light sensor auto-brightness asks for 1 and the screen is black.
++	 * Boot-arg herobrightmin=N (12-255, default 64). */
++	if (floor_level == 0) {
++		uint32_t m = 64;
++		PE_parse_boot_argn("herobrightmin", &m, sizeof(m));
++		floor_level = m < 12 ? 12 : m > 255 ? 255 : m;
++	}
++	if (level < floor_level) {
++		level = floor_level;
++	}
++	if (level != notefe_bright_level && (++logged <= 60 || logged % 50 == 0)) {
++		printf("HEROLTE BRIGHT: %u -> %u (%s)\n", notefe_bright_level, level, why);
++	}
++	notefe_bright_level = level;
++}
++
+ static bool
+ hgp_draw_locked(int s, uint32_t off, uint32_t stride, uint32_t w, uint32_t h)
+ {
+@@ -2098,6 +2125,14 @@
+ 		return false;   /* hfb_settled() gave up (and left VGR0) after the 1:1 layout was chosen: the CPU copies */
+ 	}
+ 	hg_wr64(scr, S_FBD + 128 + 32, target_va);
++	/* Brightness (from upstream Note FE 0419/0343): blend A + B * C with A = 0, B = source, C = level / 255;
++	 * 255 is the copy exactly as before. */
++	{
++		uint32_t level = notefe_bright_level;
++		union { float f; uint32_t u; } k = { .f = (float)level / 255.0f };
++		hg_wr32(scr, S_RSD + 72, level >= 255 ? 0xf0921921u : 0xf0921721u);
++		hg_wr32(scr, S_RSD + 76, k.u);
++	}
+ 	__asm__ volatile ("dsb sy" ::: "memory");
+ 
+ 	hg_run_quiet = true;
+--- a/iokit/Kernel/arm/SweetFramebuffer.cpp
++++ b/iokit/Kernel/arm/SweetFramebuffer.cpp
+@@ -214,6 +214,97 @@
+ 
+ OSDefineMetaClassAndStructors(IOMobileFramebufferUserClient, IOUserClient);
+ 
++/*
++ * Backlight (from upstream Note FE 0419/0420): an AppleARMBacklight child of the display with IODisplayParameters
++ * (brightness 0-65536) so CoreBrightness finds a backlight. The level reaches the panel through the GPU copy's blend
++ * (herolte_gpu.c); boot-arg herobl=0 publishes none.
++ */
++extern "C" void notefe_brightness_set(uint32_t level, const char *why);
++
++class AppleARMBacklight : public IOService {
++	OSDeclareDefaultStructors(AppleARMBacklight);
++public:
++	IOReturn setProperties(OSObject *properties) APPLE_KEXT_OVERRIDE;
++};
++
++OSDefineMetaClassAndStructors(AppleARMBacklight, IOService);
++
++static OSDictionary *
++notefe_range(uint32_t value)
++{
++	OSDictionary *d = OSDictionary::withCapacity(3);
++	if (d) {
++		OSNumber *n;
++		n = OSNumber::withNumber(0ULL, 32); d->setObject("min", n); n->release();
++		n = OSNumber::withNumber(65536ULL, 32); d->setObject("max", n); n->release();
++		n = OSNumber::withNumber((unsigned long long)value, 32); d->setObject("value", n); n->release();
++	}
++	return d;
++}
++
++static void
++notefe_backlight_publish(IOService *display)
++{
++	uint32_t on = 1;
++	PE_parse_boot_argn("herobl", &on, sizeof(on));
++	if (!on) {
++		return;
++	}
++	AppleARMBacklight *bl = OSTypeAlloc(AppleARMBacklight);
++	if (bl == NULL || !bl->init()) {
++		IOLog("HEROLTE BRIGHT: backlight service not made\n");
++		return;
++	}
++	OSDictionary *params = OSDictionary::withCapacity(3);
++	OSDictionary *b = notefe_range(65536), *lb = notefe_range(65536), *commit = OSDictionary::withCapacity(1);
++	OSNumber *zero = OSNumber::withNumber(0ULL, 32);
++	commit->setObject("reg", zero);
++	params->setObject("brightness", b);
++	params->setObject("linear-brightness", lb);
++	params->setObject("commit", commit);
++	bl->setProperty("IODisplayParameters", params);
++	bl->setProperty("backlight-control", true);
++	bl->setName("backlight");
++	b->release(); lb->release(); commit->release(); zero->release(); params->release();
++	if (!bl->attach(display)) {
++		IOLog("HEROLTE BRIGHT: backlight service not attached\n");
++		bl->release();
++		return;
++	}
++	bl->registerService();
++	IOLog("HEROLTE BRIGHT: AppleARMBacklight published under the display\n");
++}
++
++IOReturn
++AppleARMBacklight::setProperties(OSObject *properties)
++{
++	OSDictionary *dict = OSDynamicCast(OSDictionary, properties);
++	OSDictionary *bright = dict ? OSDynamicCast(OSDictionary, dict->getObject("brightness")) : NULL;
++	OSNumber *v = bright ? OSDynamicCast(OSNumber, bright->getObject("value")) : NULL;
++	if (v == NULL && dict) {
++		v = OSDynamicCast(OSNumber, dict->getObject("brightness"));
++	}
++	if (v) {
++		/* CoreBrightness sends linear light (65536 = full); pixels scaled by k give about k^2.2 light on this
++		 * AMOLED, so the pixel factor is about the square root of the level (0420). */
++		uint64_t x = v->unsigned64BitValue();
++		if (x > 65536) {
++			x = 65536;
++		}
++		uint64_t n = x * 65536, lo = 0, hi = 65536;
++		while (lo < hi) {
++			uint64_t mid = (lo + hi + 1) / 2;
++			if (mid * mid <= n) {
++				lo = mid;
++			} else {
++				hi = mid - 1;
++			}
++		}
++		notefe_brightness_set((uint32_t)(lo >= 65536 ? 255 : lo * 255 / 65536), "backlight");
++	}
++	return kIOReturnSuccess;
++}
++
+ bool
+ AppleCLCD::start(IOService *provider)
+ {
+@@ -422,6 +513,7 @@
+ 		OSSafeReleaseNULL(linear);
+ 		OSSafeReleaseNULL(align);
+ 	}
++	notefe_backlight_publish(this);
+ 	registerService();
+ 	IOLog("SWEET FB: AppleCLCD %ux%u stride %u at 0x%llx, default surface %u, presented as %ux%u\n",
+ 	    fWidth, fHeight, fRowBytes, fPhys, fSurface->id, fLogicalW, fLogicalH);

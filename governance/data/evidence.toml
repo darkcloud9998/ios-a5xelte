@@ -6171,3 +6171,18 @@ sha256 = "8c3f0202287533005d7981433f874baf7aa709090d71fcb6fe5a22e4f95d2907"
 size = 72
 immutable = true
 note = "salida de la entrega con mkdir.list (scratch)."
+
+[[evidence]]
+id = "E-0420"
+title = "LA CARPETA 'File Provider Storage' NO ERA LA CAUSA (el Director: 'the same'; arranque con la carpeta ya hecha: hero-run 'mkdir ...File Provider Storage: File exists', el directorio sale en el contenedor): setEnabled sigue fallando con 'NSCocoaErrorDomain Code=4 The file doesnt exist' (4 veces, para DocumentManager.Service y searchd); el bundle del proveedor SÍ existe en la raíz (LocalStorageFileProvider.appex con su binario de 8,9 MB); HIPÓTESIS ANTERIOR REFUTADA; para encontrar el archivo que falta de verdad: parche 0491 (boot-arg herolookup=<proceso>: el gancho MAC lookup_preflight imprime, por cada componente que busca ese proceso, el directorio y el nombre, hasta 8000 líneas 'HEROLOOKUP', para compararlas con el disco); kernel CI 45051576945 (success, suma coincide); min135 = min134 con herolookup=fileproviderd, quitando ,parsecd y ,wifip2pd de heronoexec para caber (los dos están en la lista de desactivados de launchd; 603 caracteres, verificador 36 PASS 0 FAIL), sha256 7bbe078f4a63b8f3f8411ec9d5e3d55399755cc25606a01817e1739680368c26, escrita y leída de vuelta, EFS intacto; PRUEBA: arrancar, ir a Archivos > Explorar > ... > Editar, activar 'En mi iPhone' (falla) y volver a TWRP; yo comparo cada ruta con el disco; contadores D-0123: BOOT 27 de 80, DROP 65 de 80"
+kind = "log"
+path = "/tmp/herolte-work/f135.txt"
+location = "scratch"
+created = "2026-11-22"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "16e65c087a5458f894d75903ab73da8c2b63893cb46646c17eb16ca6bd4645f1"
+size = 703
+immutable = true
+note = "salida del flasher de min135 (scratch)."

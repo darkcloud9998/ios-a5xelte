@@ -6081,3 +6081,18 @@ sha256 = "56226fc386beefb9bae4f298bf80cbc7eb4bd92befc6d10a2e2b7a58575f573b"
 size = 733
 immutable = true
 note = "s7ge-player.txt del teléfono (scratch)."
+
+[[evidence]]
+id = "E-0414"
+title = "min133 ESCRITA EN BOOT (la 25 de 80 de D-0123): kernel de la CI xnu-fast 45044008620 (success, suma coincide) con el parche 0490 (servicio de retroiluminación AppleARMBacklight + mezcla de brillo en la copia de la GPU + suelo 64/255 herobrightmin, solo la parte de brillo de 0342/0343 de upstream; la serie simulada aplica con 4 saltos de siempre); línea de arranque la de min132 (604 caracteres, sin cambios), imagen sha256 a6508d82254fe617911d768a3bca6b954870bf310dbda0df1a254243809e3882, verificador 36 PASS 0 FAIL; escrita y leída de vuelta, EFS intacto; PRUEBA ESPERADA: el deslizador de brillo de Ajustes cambia el brillo; la línea del kernel 'HEROLTE BRIGHT: AppleARMBacklight published under the display' y 'HEROLTE BRIGHT: a -> b (backlight)'; RIESGO: pantalla negra o atasco del dibujo (el cambio toca la copia de la GPU al panel); vuelta atrás: min132 (guardada) o el BOOT original; contadores D-0123: BOOT 25 de 80, DROP 62 de 80"
+kind = "log"
+path = "/tmp/herolte-work/f133.txt"
+location = "scratch"
+created = "2026-11-22"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "f8bb3e2d1b779633d5b19a54823d725c185aa6cb0cb7fea234e8d733f1de4332"
+size = 703
+immutable = true
+note = "salida del flasher para min133 (scratch)."

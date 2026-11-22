@@ -491,8 +491,24 @@ disable_refused_jobs(void)
       return;
    }
    fputs("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<plist version=\"1.0\">\n<dict>\n", f);
-   for (size_t i = 0; i < count; i++)
+   /* keep.list (one label a line): fixed jobs that are NOT disabled this time (searchd, for Files' Recents and Shared). */
+   static char keep[1024];
+   FILE *kf = fopen(DROP_DIR "keep.list", "r");
+   if (kf) {
+      size_t n = fread(keep, 1, sizeof(keep) - 1, kf);
+      keep[n] = 0;
+      fclose(kf);
+   }
+   size_t shown = 0;
+   for (size_t i = 0; i < count; i++) {
+      if (keep[0] && strstr(keep, jobs[i])) {
+         herodrm_log("hero-run: %s is kept (keep.list)", jobs[i]);
+         continue;
+      }
       fprintf(f, "\t<key>%s</key>\n\t<true/>\n", jobs[i]);
+      shown++;
+   }
+   count = shown;
    FILE *extra = fopen(DROP_DIR "disabled.list", "r");
    char job[256];
    while (extra && fgets(job, sizeof(job), extra)) {

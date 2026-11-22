@@ -6231,3 +6231,18 @@ sha256 = "1691002624380d8a758f73834cef1489c8d83bd43218100b5348f4c320efbd1c"
 size = 389176
 immutable = true
 note = "registro del kernel del arranque con CloudStorage (scratch)."
+
+[[evidence]]
+id = "E-0424"
+title = "MEDIDOR DE CONSUMO EN REPOSO (prerrequisito de H3 según la orquestación: BT, cámara y vibración solo si el coste en reposo es aceptable): lo que ya se sabe del registro: la batería publica corriente (IOPMPowerSource, InstantAmperage) y en los arranques recientes el vaciado en pantalla encendida y trabajo de arranque es de 600 a 1500 mA (SWEET BATTERY: -613, -1042, -794 mA; -1494 y -1552 mA en otro), MUY por encima de lo normal de un teléfono en reposo, pero son muestras con pantalla encendida y carga de arranque, no reposo; para medir de verdad: hero-run (CI mesa-ios, drop 'verified') tiene un hilo power_sampler: cada 30 s anota 'hero-run: power: <mA> <mV> <%> ext; cpu <ms> de 30000 (8 núcleos = %); top: proceso[pid] ms' en el registro del kernel y añade a /private/var/tmp/hero-power.txt (persistente; se lee desde TWRP con el lector HFS); pow.off en la zona de drop lo apaga; PROTOCOLO PARA EL DIRECTOR: arrancar, esperar a la pantalla de inicio, BLOQUEAR con el botón (pantalla apagada), NO TOCAR NADA durante 10 minutos y volver a TWRP; yo leo el archivo: corriente con la pantalla apagada y qué procesos gastan CPU; CRITERIO PROPUESTO: aceptable < 60 mA con pantalla apagada; contadores D-0123: BOOT 28 de 80, DROP 67 de 80"
+kind = "log"
+path = "/tmp/herolte-work/drop424.txt"
+location = "scratch"
+created = "2026-11-22"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "80e68080505b8e717231258d4807522afadd1a5553d7b348d2963c05ff9d7cfd"
+size = 72
+immutable = true
+note = "salida de la entrega del medidor de consumo (scratch)."

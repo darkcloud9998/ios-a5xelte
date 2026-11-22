@@ -1715,6 +1715,7 @@ haptics_probe(__unused void *unused)
  * footprint (proc_pid_rusage, root sees all) with their name, pid and MB, as one or two kernel log lines.
  */
 #include <mach/mach.h>
+#include <mach/mach_time.h>
 /* libproc.h is not in the iPhoneOS SDK; the three functions are in libSystem and are looked up by name (a missing one only turns the sampler off) */
 typedef int (*proc_listallpids_fn)(void *, int);
 typedef int (*proc_pid_rusage_fn)(int, int, void *);

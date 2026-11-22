@@ -6111,3 +6111,18 @@ sha256 = "e0f2f8835e99724d140d53798a6271690875ff423d91b335dad841ebfed1482d"
 size = 428245
 immutable = true
 note = "registro del kernel del arranque de min133 (scratch)."
+
+[[evidence]]
+id = "E-0416"
+title = "BRILLO CONFIRMADO POR EL DIRECTOR ('yeah, it works', min133) Y PRUEBA DE REGISTRO COMPLETO PARA ARCHIVOS (DROP 63 de 80): el registro unificado de min133 muestra 'Persona List failed' solo en SpringBoard/UserManagement (EPERM y ENOENT; los vouchers de persona sí se adoptan: no es de fileproviderd) y 'remove all extension instances ... com.apple.FileProvider.LocalStorage: 0 found' (nadie lo lanza); los argumentos de fileproviderd salen '<private>', por eso se prueba un perfil de registro: hero-run (CI mesa-ios, hero-run sha256 9b43a5d5732dda71bd5b4b00321a6d6b889ec318b40620d97b5ed02a565a4636) escribe /Library/Preferences/Logging/Subsystems/{com.apple.FileProvider,FileProviderDaemon,DocumentManager,fileprovider,fileprovider.daemon}.plist con Level Debug/Persist Debug, Default-Privacy-Setting Public y Enable-Private-Data true (claves tomadas de libsystem_trace del caché de iOS 16) cuando existe logging.on; DROP: autorun + logging.on, 'verified'; EXPECTATIVA HONESTA: puede que libtrace ignore Enable-Private-Data sin un perfil firmado; entonces se verán igual las líneas de depuración persistidas pero con <private>; contadores D-0123: BOOT 25 de 80, DROP 63 de 80"
+kind = "log"
+path = "/tmp/herolte-work/drop416.txt"
+location = "scratch"
+created = "2026-11-22"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "2d916c4065aa52b56c5caf9a1e62faefee915c4a12b8ca003b5217c9752ee7f9"
+size = 119
+immutable = true
+note = "salida de la entrega del autorun con perfiles de registro (scratch)."

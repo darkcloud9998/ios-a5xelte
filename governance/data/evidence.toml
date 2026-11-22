@@ -6141,3 +6141,18 @@ sha256 = "9165ff2e65b066101c2700f2731fe8a392dc1d9d4c78c73d7ea56c4128bf5517"
 size = 703
 immutable = true
 note = "salida del flasher de min134 (scratch)."
+
+[[evidence]]
+id = "E-0418"
+title = "PRIMER ARRANQUE DE min134 (el Director: 'the same thing happens and the 3 windows' = Recientes, Compartido y Explorar igual): 'hero-run: com.apple.searchd is kept (keep.list)' y 'jobs in launchd's disabled list: 43' (uno menos), PERO el registro unificado sigue con 'failed lookup: name = com.apple.searchd ... requestor = SpringBoard[27], error = 3: No such process', 'com.apple.spotlight.SearchAgent ... requestor suggestd' y 135 'CSSearchQueryErrorDomain Code=-2001': es lo ya sabido del orden: launchd lee su lista de desactivados al arrancar, antes de que hero-run la reescriba, así que un cambio de la lista se nota UN ARRANQUE DESPUÉS (igual que los demonios de la tanda 1, E-0405); la imagen min134 ya no bloquea searchd; PRÓXIMO PASO: un segundo arranque SIN escribir nada; si searchd se levanta, Recientes y Compartido cambian; contadores D-0123: BOOT 26 de 80, DROP 64 de 80"
+kind = "log"
+path = "/tmp/herolte-work/ios-crashes/log-n42.txt"
+location = "scratch"
+created = "2026-11-22"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "ec83c0de92895ca3fe4467a63e50bd5574fa3d5a295496f5e9f737584c27cc23"
+size = 342577
+immutable = true
+note = "registro del kernel del primer arranque de min134 (scratch)."

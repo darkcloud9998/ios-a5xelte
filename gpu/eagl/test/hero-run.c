@@ -443,6 +443,39 @@ migration_restore(void)
  * next boot on. DROP_DIR disabled.list, one job a line, adds to them with no new build: 41 at once left SpringBoard
  * waiting for ever behind a black screen, so which ones are safe is found by trying.
  */
+/* A logging profile for the Files stack: Subsystems/<name>.plist asks for debug level, persisted and with the private
+ * arguments readable (Enable-Private-Data). Whether this build of libtrace honours it is what this tries (E-0416). */
+static void
+write_logging_plists(void)
+{
+   if (access(DROP_DIR "logging.on", F_OK) != 0) {
+      return;
+   }
+   static const char *const names[] = { "com.apple.FileProvider", "com.apple.FileProviderDaemon",
+      "com.apple.DocumentManager", "com.apple.fileprovider", "com.apple.fileprovider.daemon" };
+   mkdir("/Library", 0755);
+   mkdir("/Library/Preferences", 0755);
+   mkdir("/Library/Preferences/Logging", 0755);
+   mkdir("/Library/Preferences/Logging/Subsystems", 0755);
+   int ok = 0;
+   for (unsigned i = 0; i < sizeof(names) / sizeof(names[0]); i++) {
+      char path[160];
+      snprintf(path, sizeof(path), "/Library/Preferences/Logging/Subsystems/%s.plist", names[i]);
+      FILE *f = fopen(path, "w");
+      if (f == NULL) {
+         printf("hero-run: logging: %s: %s\n", path, strerror(errno));
+         continue;
+      }
+      fputs("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" "
+            "\"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\"><dict><key>DEFAULT-OPTIONS</key>"
+            "<dict><key>Level</key><dict><key>Enable</key><string>Debug</string><key>Persist</key><string>Debug</string></dict>"
+            "<key>Default-Privacy-Setting</key><string>Public</string><key>Enable-Private-Data</key><true/></dict></dict></plist>\n", f);
+      fclose(f);
+      ok++;
+   }
+   printf("hero-run: logging: %d profile(s) written under /Library/Preferences/Logging/Subsystems\n", ok);
+}
+
 static void
 disable_refused_jobs(void)
 {
@@ -1764,6 +1797,7 @@ main(int main_argc, char **main_argv)
    wallpapers_for_this_screen();
    migration_restore();
    disable_refused_jobs();
+   write_logging_plists();
    census_fd = open(DROP_DIR "census.out", O_RDWR | O_CREAT | O_TRUNC, 0644);
    pid_t census = fork();
    if (census == 0) {

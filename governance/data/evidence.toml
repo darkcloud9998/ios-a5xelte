@@ -6156,3 +6156,18 @@ sha256 = "ec83c0de92895ca3fe4467a63e50bd5574fa3d5a295496f5e9f737584c27cc23"
 size = 342577
 immutable = true
 note = "registro del kernel del primer arranque de min134 (scratch)."
+
+[[evidence]]
+id = "E-0419"
+title = "ARCHIVOS: 'EN MI IPHONE' SE ACTIVA Y SE DESACTIVA SOLO (el Director: marca la ubicación, pulsa OK y se desactiva): Recientes y Compartido FUNCIONAN con searchd levantado en el segundo arranque de min134 (E-0418); el registro de depuración dice, tras 'FPDXPCServicer setEnabled:forDomainIdentifier:providerIdentifier:' para com.apple.FileProvider.LocalStorage (dominio com.apple.FileProvider.LocalStorage.domain), 'setEnabled ..._block_invoke: Error Domain=NSCocoaErrorDomain Code=4 The file doesnt exist.' y antes 'stateForDomainWithID: NSFileProviderInternalErrorDomain Code=12'; el contenedor de grupo de LocalStorage (AppGroup/3872A83B-...) solo tiene Library/: falta 'File Provider Storage', que el caché de iOS 16 nombra como raíz del proveedor local ('~/Library/Group Containers/group.com.apple.FileProvider.LocalStorage/File Provider Storage', 'Containers/Shared/AppGroup/<uuid>/File Provider Storage'); HIPÓTESIS (no probada): esa carpeta falta y por eso falla el alta del dominio; AUTORIZACIÓN DEL DIRECTOR (2026-11-22, pregunta: 'Sí, solo esa carpeta'): crear esa carpeta VACÍA con propietario mobile, nada más; hero-run (CI mesa-ios, sha256 c98909080c2e0fdf74e70f9a8d483c227d8d1bdcec7a427c28f1b8443590a892) lee mkdir.list de la zona de drop y solo crea carpetas bajo /private/var/mobile/Containers/Shared/AppGroup/ sin '..'; DROP: autorun + mkdir.list, verificados; contadores D-0123: BOOT 26 de 80, DROP 65 de 80"
+kind = "log"
+path = "/tmp/herolte-work/drop419.txt"
+location = "scratch"
+created = "2026-11-22"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "8c3f0202287533005d7981433f874baf7aa709090d71fcb6fe5a22e4f95d2907"
+size = 72
+immutable = true
+note = "salida de la entrega con mkdir.list (scratch)."

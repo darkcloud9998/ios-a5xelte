@@ -47,7 +47,7 @@ A diagnostic for failures that only say "The file doesn't exist": with the boot-
 +	if (dvp == NULL || vn_getpath(dvp, dir, &dlen) != 0) {
 +		strlcpy(dir, "?", sizeof(dir));
 +	}
-+	printf("HEROLOOKUP %s: %s / %.*s\n", name, dir, (int)(pathlen > 100 ? 100 : pathlen), path);
++	printf("HEROLOOKUP %s: %s / %.*s\n", name, dir, (int)strnlen(path, 200), path);
 +	return 0;
 +}
 +

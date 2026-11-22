@@ -6126,3 +6126,18 @@ sha256 = "2d916c4065aa52b56c5caf9a1e62faefee915c4a12b8ca003b5217c9752ee7f9"
 size = 119
 immutable = true
 note = "salida de la entrega del autorun con perfiles de registro (scratch)."
+
+[[evidence]]
+id = "E-0417"
+title = "CAUSA DE 'CONTENT UNAVAILABLE' EN RECIENTES Y COMPARTIDO ENCONTRADA Y PRUEBA (el Director: Archivos da el error en Recientes y en Compartido, en Explorar solo la barra de búsqueda y las etiquetas/papelera): el perfil de registro de E-0416 FUNCIONÓ en parte (el registro del arranque 41 trae mensajes de depuración de Archivos con casi todo legible); lo que dice: (1) Recientes y Compartido son consultas de Spotlight: 'didEncounterError(Error Domain=com.apple.FileProvider.Spotlight Code=0 ... NSUnderlyingError CSSearchQueryErrorDomain Code=-2001)' = no hay servicio de búsqueda: searchd está DESACTIVADO por dos capas (lista fija de hero-run y heronoexec=...searchd... de la línea de arranque), desde la época de la carga de CPU de iOS 18; (2) el proveedor local sale 'FPProvider id:com.apple.FileProvider.LocalStorage ... state:disabled' y 'Error Domain=com.apple.DocumentManager Code=2 No location available to save this document. Enable at least one location' (por eso 'En mi iPhone' no aparece: el proveedor está en estado disabled; pendiente averiguar quién lo habilita); PRUEBA: min134 = min133 sin searchd en heronoexec (595 caracteres, sha256 a6c705a25e699a46368309984e9542dc96aa90d3cfe5e8868aa8142c13392f6b, verificador 36 PASS 0 FAIL) + hero-run con keep.list (nuevo; DROP keep.list con com.apple.searchd y el autorun, verificados), ambos escritos y leídos de vuelta, EFS intacto; EXPECTATIVA: Recientes y Compartido dejan de dar error (aunque vacíos); vigilar calor y memoria (searchd indexa); vuelta atrás: min133 + quitar keep.list; contadores D-0123: BOOT 26 de 80, DROP 64 de 80"
+kind = "log"
+path = "/tmp/herolte-work/f134.txt"
+location = "scratch"
+created = "2026-11-22"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "9165ff2e65b066101c2700f2731fe8a392dc1d9d4c78c73d7ea56c4128bf5517"
+size = 703
+immutable = true
+note = "salida del flasher de min134 (scratch)."

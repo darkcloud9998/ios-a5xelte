@@ -6201,3 +6201,18 @@ sha256 = "b7d99fe43d4169e20d58d752be93d8f5f4272a6df1531cbf561851ad2c53ad63"
 size = 703
 immutable = true
 note = "salida del flasher de min136 (scratch)."
+
+[[evidence]]
+id = "E-0422"
+title = "RASTREO DE min136 (el Director: 'i did, just back in twrp'): fileproviderd hizo solo 14 búsquedas distintas en el arranque; las que importan: /private/var/mobile/Library/CloudStorage NO EXISTE en el disco (leído con el lector HFS: FileNotFoundError), y /private/var/mobile/Library/Application Support/FileProvider/AlternateContents.plist tampoco (opcional); el resto existe o son del sistema (passwd, MCMeta, syslog, ExtensionFoundation); CloudStorage es la carpeta donde iOS 16 crea la raíz de cada proveedor de archivos, por tanto el mejor candidato a 'The file doesnt exist' al activar 'En mi iPhone'; AUTORIZACIÓN: pregunté al Director si autorizaba crearla vacía (propietario mobile, 0700) y respondió literalmente 'Whatever you want' (no un sí explícito; lo trato como delegación en mi criterio, ya que la carpeta es vacía y reversible con rmdir); hero-run (CI mesa-ios, run de mesa-ios) amplía mkdir.list solo para esa ruta exacta; DROP: autorun + mkdir.list con las dos carpetas, 'verified'; contadores D-0123: BOOT 28 de 80, DROP 66 de 80"
+kind = "log"
+path = "/tmp/herolte-work/drop422.txt"
+location = "scratch"
+created = "2026-11-22"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "11358878205ac53c023c53d710d22c7fb7f0d70e766e8829966269c27824b192"
+size = 71
+immutable = true
+note = "salida de la entrega con CloudStorage (scratch)."

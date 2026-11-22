@@ -6216,3 +6216,18 @@ sha256 = "11358878205ac53c023c53d710d22c7fb7f0d70e766e8829966269c27824b192"
 size = 71
 immutable = true
 note = "salida de la entrega con CloudStorage (scratch)."
+
+[[evidence]]
+id = "E-0423"
+title = "CloudStorage TAMPOCO ERA LA CAUSA (el Director: 'the same thing btw'): 'hero-run: mkdir /private/var/mobile/Library/CloudStorage: made' (la carpeta se creó, 0700, mobile), y setEnabled para com.apple.FileProvider.LocalStorage sigue fallando igual (NSCocoaErrorDomain Code=4 The file doesnt exist, sin ningún mensaje entre la petición de Archivos y el error); el rastreo de rutas de fileproviderd no muestra ninguna búsqueda nueva durante la activación (solo las 14 del arranque): el fallo no es una ruta que fileproviderd busque con namei; mis intentos estáticos de seguir setEnabled en el binario cacheado (iOS 16, sin símbolos) solo llegan a trozos de registro; DESCARTADO: carpeta File Provider Storage, carpeta CloudStorage, personas, grupo de contenedor, searchd (este último arregló Recientes y Compartido); QUEDA: el proveedor se activa buscando una extensión por pluginkit/ExtensionKit y fallando (el 'Code=4' puede venir de ahí) o una comprobación de dominio por defecto; SIGUIENTE (si el Director lo quiere): insertar una biblioteca en fileproviderd para ver la llamada que falla, trabajo grande; DECISIÓN DEL INGENIERO: dejar 'En mi iPhone' por ahora, porque S7GE Player ya lee y reproduce las descargas de Safari (E-0413); contadores D-0123: BOOT 28 de 80, DROP 66 de 80"
+kind = "log"
+path = "/tmp/herolte-work/ios-crashes/log-n48.txt"
+location = "scratch"
+created = "2026-11-22"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "1691002624380d8a758f73834cef1489c8d83bd43218100b5348f4c320efbd1c"
+size = 389176
+immutable = true
+note = "registro del kernel del arranque con CloudStorage (scratch)."

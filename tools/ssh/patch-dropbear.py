@@ -32,4 +32,9 @@ change("svr-auth.c", "\tsetusershell();\n",
        "\t\treturn DROPBEAR_SUCCESS;\n"
        "\t}\n"
        "\tsetusershell();\n")
+# iOS's "/" is group-writable, so the walk up from authorized_keys stops at our drop folder (root's, 0755; hero-run
+# sets it on every start) instead of refusing the key (seen on the phone, 2026-11-27).
+top = shell.rsplit("/", 3)[0]           # .../herolte from .../herolte/ssh/bin/sh
+change("svr-authpubkey.c", 'if (strcmp(path, ses.authstate.pw_dir) == 0 || strcmp(path, "/") == 0) {',
+       f'if (strcmp(path, ses.authstate.pw_dir) == 0 || strcmp(path, "/") == 0 || strcmp(path, "{top}") == 0) {{')
 print("dropbear patched")

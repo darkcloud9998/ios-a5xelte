@@ -13,7 +13,9 @@
 #include <sys/resource.h>
 #include <sys/stat.h>
 #include <sys/sysctl.h>
-#include <sys/reboot.h>
+/* the iOS SDK has no <sys/reboot.h> */
+extern int reboot(int);
+#define RB_HALT 0x08
 #include <dlfcn.h>
 #include <fcntl.h>
 #include <objc/message.h>

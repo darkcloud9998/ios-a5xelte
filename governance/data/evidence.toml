@@ -6246,3 +6246,33 @@ sha256 = "80e68080505b8e717231258d4807522afadd1a5553d7b348d2963c05ff9d7cfd"
 size = 72
 immutable = true
 note = "salida de la entrega del medidor de consumo (scratch)."
+
+[[evidence]]
+id = "E-0425"
+title = "PRIMERA MEDIDA DE CONSUMO (medidor de E-0424, recogida desde TWRP con tools/hero pull, solo lectura): 536 muestras de 30 s, 503 sin cargador; un tramo continuo de 501 muestras (250 min) en batería en el que la capacidad publicada baja de 2820 a 0 con mediana de 527 mA y CPU mediana 31,6 s por cada 30 s (un núcleo entero ocupado sin parar); en ese tramo el pid 92 acumula 14575 s de CPU (el nombre no se registró: proc_name volvió vacío, así que NO se sabe qué proceso era en ese arranque); en el último arranque (14 min, con el cargador y aun así descargando, -87 a -1341 mA) el pid 88 gasta ~29 s de cada 30 y es com.apple.coreduetd según el registro del kernel, que además dice 'process coreduetd[88] thread 1892 caught burning CPU'; coreduetd busca servicios que tenemos desactivados (analyticsd, cloudd, remindd, identityservicesd): HIPÓTESIS sin probar de por qué gira; el kernel del último arranque marca 0 % y 3,24 V con cargador; luego en TWRP la batería de Android marca 78 % cargando; NO se sabe si la pantalla estaba apagada durante los 250 min (el medidor no lo registra)"
+kind = "log"
+path = "/home/pioxi/HackiOS/evidencias/registro/E-0425-hero-power.txt"
+location = "scratch"
+created = "2026-11-27"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "686a81141cddd2d62f74f1b7ad5beceeecc24bd628dad2d2bccbbdcba70870dd"
+size = 80476
+immutable = true
+note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."
+
+[[evidence]]
+id = "E-0426"
+title = "PÉRDIDA DE EVIDENCIAS: al reiniciar el PC el 2026-11-27 se vació /tmp y con él los archivos de evidencia que estaban allí (y algunos de /home que ya no existen); la lista (identificador y ruta) está en este archivo; las entradas de evidence.toml conservan título, tamaño y sha256, pero el archivo ya no se puede revisar; CORRECCIÓN: las evidencias nuevas van a ~/HackiOS/evidencias (tools/hero pull y tools/hero evidence); no se ha reescrito ninguna entrada antigua"
+kind = "log"
+path = "/home/pioxi/HackiOS/evidencias/registro/E-0426-evidencias-perdidas-20261127.txt"
+location = "scratch"
+created = "2026-11-27"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "37c14121f823f2404c8a1ed57c068aa7c0d69f4f7632a811ae522876598d6c7c"
+size = 4066
+immutable = true
+note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."

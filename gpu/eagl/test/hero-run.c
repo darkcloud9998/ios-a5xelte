@@ -1720,6 +1720,18 @@ haptics_probe(__unused void *unused)
 typedef int (*proc_listallpids_fn)(void *, int);
 typedef int (*proc_pid_rusage_fn)(int, int, void *);
 typedef int (*proc_name_fn)(int, void *, uint32_t);
+/* A process's short name from the kernel (proc_name came back empty on the phone, E-0425). */
+static void
+pid_name(int pid, char *out, size_t len)
+{
+   struct kinfo_proc kp;
+   size_t n = sizeof(kp);
+   int mib[4] = { CTL_KERN, KERN_PROC, KERN_PROC_PID, pid };
+   out[0] = 0;
+   if (sysctl(mib, 4, &kp, &n, NULL, 0) == 0 && n > 0)
+      snprintf(out, len, "%s", kp.kp_proc.p_comm);
+}
+
 /* Power sampler: every 30 s the battery (IOPMPowerSource: current, voltage, percent) and where the CPU time went
  * (the processes' user + system time since the last round), appended to /private/var/tmp/hero-power.txt and logged.
  * For the idle-cost measurement that H3 (Bluetooth, camera, haptics) depends on (E-0424). pow.off in the drop stops it. */
@@ -1786,7 +1798,7 @@ power_sampler(void *unused)
                   top[m] = top[m - 1];
                top[k].pid = pids[i];
                top[k].ms = ms;
-               name_p(pids[i], top[k].name, sizeof(top[k].name));
+               pid_name(pids[i], top[k].name, sizeof(top[k].name));
                break;
             }
          }
@@ -1837,7 +1849,7 @@ memory_sampler(void *unused)
             continue;
          top[at].pid = pids[i];
          top[at].mb100 = mb100;
-         proc_name_p(pids[i], top[at].name, sizeof(top[at].name));
+         pid_name(pids[i], top[at].name, sizeof(top[at].name));
          for (int k = at; k > 0 && top[k].mb100 > top[k - 1].mb100; k--) {
             __typeof__(top[0]) tmp = top[k - 1];
             top[k - 1] = top[k];

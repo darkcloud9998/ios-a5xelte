@@ -1,0 +1,285 @@
+#!/usr/bin/env python3
+"""hero: el trabajo repetido del port HEROLTE en una sola orden. Ninguna orden escribe en el teléfono.
+
+  hero status                      teléfono, git, disco y contadores
+  hero pull [NOMBRE]               desde TWRP: registro del kernel, registro unificado, census y consumo
+  hero logs EXPRESIÓN [DIR]        busca en el registro unificado y en el del kernel (por defecto, la última recogida)
+  hero power [ARCHIVO]             resume hero-power.txt (consumo y CPU)
+  hero ci xnu-fast|mesa-ios        lanza la compilación en GitHub, espera y descarga el resultado
+  hero evidence ARCHIVO TÍTULO     copia el archivo a evidencias/ y lo añade a evidence.toml
+
+Rutas (se pueden cambiar con variables): HEROLTE_HOME (~/HackiOS), HEROLTE_ADB (/usr/bin/adb), HERO_REPO (GitHub).
+Escribir BOOT o la zona DROP sigue siendo herolte-flash-boot.sh / herolte-drop.py, con autorización.
+"""
+import collections
+import datetime
+import hashlib
+import json
+import os
+import pathlib
+import re
+import shutil
+import statistics
+import struct
+import subprocess
+import sys
+import time
+
+TOOLS = pathlib.Path(__file__).resolve().parent
+REPO = TOOLS.parent
+HOME = pathlib.Path(os.environ.get("HEROLTE_HOME", pathlib.Path.home() / "HackiOS"))
+EVID = HOME / "evidencias"
+ADB = os.environ.get("HEROLTE_ADB", "/usr/bin/adb")
+GH_REPO = os.environ.get("HERO_REPO", "darkcloud9998/ios-a5xelte")
+VENV_PY = HOME / "lab" / "venv" / "bin" / "python"
+
+
+def run(cmd, timeout=900, **kw):
+    kw.setdefault("capture_output", True)
+    kw.setdefault("text", True)
+    return subprocess.run([str(c) for c in cmd], timeout=timeout, **kw)
+
+
+def in_recovery():
+    return re.search(r"\trecovery$", run([ADB, "devices"], timeout=30).stdout, re.M) is not None
+
+
+def wait_recovery(tries=30):
+    """El adb de TWRP se cae a menudo: se reinicia el servidor una vez y se reintenta."""
+    run([ADB, "kill-server"], timeout=30)
+    run([ADB, "start-server"], timeout=60)
+    for _ in range(tries):
+        if in_recovery():
+            time.sleep(2)
+            return True
+        time.sleep(3)
+        run([ADB, "reconnect"], timeout=30)
+    return False
+
+
+def hfs(*args, tries=3):
+    for _ in range(tries):
+        r = run([sys.executable, TOOLS / "herolte-hfs-read.py", *args], timeout=600,
+                env={**os.environ, "HEROLTE_ADB": ADB})
+        if r.returncode == 0:
+            return r.stdout
+        if "FileNotFoundError" in r.stderr:
+            return None
+        time.sleep(4)
+    return None
+
+
+def sha256(path):
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1 << 20), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
+def pulls():
+    return sorted(p for p in EVID.glob("*/*") if (p / "SHA256SUMS").exists())
+
+
+def cmd_pull(args):
+    name = args[0] if args else datetime.datetime.now().strftime("%H%M%S")
+    if not re.fullmatch(r"[\w.-]+", name):
+        sys.exit("nombre no válido")
+    out = EVID / datetime.date.today().isoformat() / name
+    if out.exists():
+        sys.exit(f"ya existe {out}")
+    if not wait_recovery():
+        sys.exit("no veo el teléfono en TWRP (adb devices)")
+    out.mkdir(parents=True, mode=0o700)
+    r = run([sys.executable, TOOLS / "herolte-log-pull.py", ADB, out / "kernel.txt"], timeout=900)
+    print("kernel:", "ok" if (out / "kernel.txt").exists() else f"FALLO {r.stderr[-200:]}")
+    for path, local in (("/private/var/herolte/census.out", "census.out"),
+                        ("/private/var/tmp/hero-power.txt", "hero-power.txt")):
+        print(f"{local}:", "ok" if hfs("get", path, out / local) is not None else "no está")
+    listing = hfs("ls", "/private/var/db/diagnostics/Persist") or ""
+    names = [w for line in listing.splitlines() for w in line.split() if w.endswith(".tracev3")]
+    for n in sorted(names)[-3:]:
+        ok = hfs("get", f"/private/var/db/diagnostics/Persist/{n}", out / n) is not None
+        print(f"{n}:", "ok" if ok else "FALLO")
+    files = sorted(p for p in out.iterdir() if p.is_file())
+    (out / "SHA256SUMS").write_text("".join(f"{sha256(p)}  {p.name}\n" for p in files))
+    print("guardado en", out)
+
+
+def lz4_blocks(data):
+    import lz4.block
+    i = 0
+    while True:
+        i = data.find(b"bv41", i)
+        if i < 0 or i + 12 > len(data):
+            return
+        u, c = struct.unpack("<II", data[i + 4:i + 12])
+        if 0 < c < 1 << 22 and 0 < u < 1 << 24 and data[i + 12 + c:i + 16 + c] == b"bv4$":
+            try:
+                yield lz4.block.decompress(data[i + 12:i + 12 + c], uncompressed_size=u)
+            except lz4.block.LZ4BlockError:
+                pass
+            i += 16 + c
+        else:
+            i += 4
+
+
+def normalize(s):
+    s = re.sub(r"[0-9A-F]{8}-[0-9A-F-]{27}", "UUID", s)
+    return re.sub(r"0x[0-9a-f]+", "0xA", s)[:300]
+
+
+def cmd_logs(args):
+    if not args:
+        sys.exit("falta la expresión")
+    try:
+        import lz4.block  # noqa: F401
+    except ImportError:
+        if VENV_PY.exists() and pathlib.Path(sys.prefix) != VENV_PY.parent.parent:
+            os.execv(VENV_PY, [str(VENV_PY), __file__, "logs", *args])
+        sys.exit(f"falta lz4: crea el entorno {VENV_PY.parent.parent}")
+    found = pulls()
+    if len(args) < 2 and not found:
+        sys.exit("no hay ninguna recogida: usa 'hero pull'")
+    where = pathlib.Path(args[1]) if len(args) > 1 else max(found, key=lambda p: (p / "SHA256SUMS").stat().st_mtime)
+    pat = re.compile(args[0])
+    seen = collections.Counter()
+    kernel = where / "kernel.txt"
+    if kernel.exists():
+        for line in kernel.read_text(errors="replace").splitlines():
+            if pat.search(line):
+                seen["K " + normalize(line)] += 1
+    for f in sorted(where.glob("*.tracev3")):
+        for block in lz4_blocks(f.read_bytes()):
+            for m in re.finditer(rb"[\x20-\x7e]{4,}", block):
+                s = m.group(0).decode("latin1")
+                if pat.search(s):
+                    seen["U " + normalize(s)] += 1
+    print(f"# {where}: {len(seen)} líneas distintas (K kernel, U unificado)")
+    for line, n in list(seen.items())[:80]:
+        print(n, line)
+
+
+POWER = re.compile(r"^(\d+) hero-run: power: (-?\d+) mA (\d+) mV (-?\d+)% ext=(-?\d+); cpu (\d+) ms.*?top:(.*)$")
+
+
+def parse_power(text):
+    rows = []
+    for line in text.splitlines():
+        m = POWER.match(line)
+        if m:
+            t, ma, mv, pct, ext, cpu = (int(x) for x in m.groups()[:6])
+            top = [(n or "?", int(p), int(ms)) for n, p, ms in re.findall(r" ([^\[\]]*?)\[(\d+)\] (\d+) ms", m.group(7))]
+            rows.append(dict(t=t, ma=ma, mv=mv, pct=pct, ext=ext, cpu=cpu, top=top))
+    return rows
+
+
+def cmd_power(args):
+    if args:
+        path = pathlib.Path(args[0])
+    else:
+        have = [p / "hero-power.txt" for p in pulls() if (p / "hero-power.txt").exists()]
+        if not have:
+            sys.exit("no hay hero-power.txt recogido")
+        path = max(have, key=lambda p: p.stat().st_mtime)
+    rows = parse_power(path.read_text(errors="replace"))
+    if not rows:
+        sys.exit(f"{path}: sin muestras")
+    battery = [r for r in rows if r["ext"] == 0]
+    print(f"{path}: {len(rows)} muestras, {len(battery)} con batería (sin cargador)")
+    if battery:
+        ma = sorted(r["ma"] for r in battery)
+        print(f"corriente con batería: mediana {statistics.median(ma):.0f} mA, mínima {ma[0]}, máxima {ma[-1]}")
+        print(f"CPU: mediana {statistics.median(r['cpu'] for r in battery):.0f} ms de cada 30000")
+    total = collections.Counter()
+    for r in rows:
+        for name, pid, ms in r["top"]:
+            total[f"{name}[{pid}]"] += ms
+    for who, ms in total.most_common(8):
+        print(f"  {ms:>8} ms  {who}")
+
+
+def cmd_ci(args):
+    if args not in (["xnu-fast"], ["mesa-ios"]):
+        sys.exit("uso: hero ci xnu-fast|mesa-ios")
+    wf = args[0] + ".yml"
+    branch = run(["git", "-C", REPO, "branch", "--show-current"]).stdout.strip()
+    head = run(["git", "-C", REPO, "rev-parse", "HEAD"]).stdout.strip()
+
+    def runs():
+        r = run(["gh", "run", "list", "-R", GH_REPO, "--workflow", wf, "-L", "10", "--json", "databaseId,headSha"])
+        return [x for x in json.loads(r.stdout or "[]") if x["headSha"] == head]
+
+    before = {x["databaseId"] for x in runs()}
+    r = run(["gh", "workflow", "run", wf, "-R", GH_REPO, "--ref", branch])
+    if r.returncode:
+        sys.exit(r.stderr)
+    for _ in range(40):
+        new = [x["databaseId"] for x in runs() if x["databaseId"] not in before]
+        if new:
+            break
+        time.sleep(3)
+    else:
+        sys.exit(f"no aparece la ejecución del commit {head[:7]} (¿está subido a la rama {branch}?)")
+    rid = str(max(new))
+    print("ejecución", rid, "commit", head[:7], flush=True)
+    run(["gh", "run", "watch", rid, "-R", GH_REPO, "--exit-status"], timeout=3600)
+    view = run(["gh", "run", "view", rid, "-R", GH_REPO, "--json", "conclusion", "--jq", ".conclusion"]).stdout.strip()
+    if view != "success":
+        sys.exit(f"ejecución {rid}: {view or 'sin terminar'}")
+    out = HOME / "builds" / "ci" / rid
+    r = run(["gh", "run", "download", rid, "-R", GH_REPO, "-D", out])
+    if r.returncode:
+        sys.exit(r.stderr)
+    print("descargado en", out)
+
+
+def add_evidence(toml_path, src, title, store):
+    text = toml_path.read_text()
+    n = max((int(x) for x in re.findall(r'^id = "E-(\d+)"', text, re.M)), default=0) + 1
+    eid = f"E-{n:04d}"
+    store.mkdir(parents=True, exist_ok=True)
+    dst = store / f"{eid}-{src.name}"
+    shutil.copy2(src, dst)
+    q = lambda s: json.dumps(str(s), ensure_ascii=False)
+    entry = ["", "[[evidence]]", f'id = "{eid}"', f"title = {q(title)}", 'kind = "log"', f"path = {q(dst)}",
+             'location = "scratch"', f'created = "{datetime.date.today().isoformat()}"', 'domain = "device"',
+             'level = "L2"', 'device = "this-unit"', f'sha256 = "{sha256(dst)}"', f"size = {dst.stat().st_size}",
+             "immutable = true", 'note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."', ""]
+    toml_path.write_text(text + "\n".join(entry))
+    return eid, dst
+
+
+def cmd_evidence(args):
+    if len(args) != 2 or not pathlib.Path(args[0]).is_file():
+        sys.exit("uso: hero evidence ARCHIVO TÍTULO")
+    eid, dst = add_evidence(REPO / "governance" / "data" / "evidence.toml", pathlib.Path(args[0]), args[1],
+                            EVID / "registro")
+    print(eid, dst)
+    print("falta: python3 tools/governance.py render && check, y el commit")
+
+
+def cmd_status(_):
+    devices = run([ADB, "devices"], timeout=30).stdout.strip().splitlines()[1:]
+    print("teléfono:", ", ".join(d.split("\t")[-1] for d in devices) or "no conectado")
+    for repo in sorted((HOME / "repos").iterdir()):
+        if (repo / ".git").exists():
+            branch = run(["git", "-C", repo, "branch", "--show-current"]).stdout.strip()
+            dirty = len(run(["git", "-C", repo, "status", "--short"]).stdout.splitlines())
+            print(f"repo {repo.name}: {branch}, {dirty} cambios sin commit")
+    for mount in ("/", str(HOME)):
+        d = shutil.disk_usage(mount)
+        print(f"disco {mount}: {d.free / 1e9:.1f} GB libres")
+    decisions = (REPO / "governance" / "data" / "decisions.toml").read_text()
+    today = datetime.date.today().isoformat()
+    live = [(i, v) for i, v in re.findall(r'id = "(D-\d+)"(?:(?!\[\[decision\]\]).)*?valid_until = "([\d-]+)"',
+                                          decisions, re.S) if v >= today]
+    print("autorizaciones de escritura vigentes:", ", ".join(f"{i} hasta {v}" for i, v in live) or "ninguna con plazo")
+
+
+COMMANDS = dict(status=cmd_status, pull=cmd_pull, logs=cmd_logs, power=cmd_power, ci=cmd_ci, evidence=cmd_evidence)
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2 or sys.argv[1] not in COMMANDS:
+        sys.exit(__doc__)
+    COMMANDS[sys.argv[1]](sys.argv[2:])

@@ -130,7 +130,8 @@ acceptance = "Tabla componente / licencia / evidencia / compatibilidad con APSL-
 [[task]]
 id = "T-0012"
 title = "Pruebas N1 (sonda) y N2 (XNU solo lectura) en el S7: escribir BOOT desde TWRP"
-status = "in_progress"
+status = "blocked"
+blocked_on = "D-0126 sin firmar: las autorizaciones D-0090 (22/11) y D-0123 (23/11) han caducado"
 priority = 9
 owner = "ingeniero"
 depends_on = ["T-0013"]

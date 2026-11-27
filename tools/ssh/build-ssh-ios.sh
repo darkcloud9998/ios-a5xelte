@@ -31,6 +31,8 @@ cat > localoptions.h <<EOF
 #define DROPBEAR_SVR_PAM_AUTH 0
 #define DROPBEAR_SVR_PUBKEY_AUTH 1
 #define DROPBEAR_REEXEC 0
+/* only root logs in (patch-dropbear.py), so there are no privileges to drop; iOS has no setresgid() */
+#define DROPBEAR_SVR_DROP_PRIVS 0
 #define DROPBEAR_SFTPSERVER 0
 #define DROPBEAR_X11FWD 0
 #define DROPBEAR_SVR_AGENTFWD 0

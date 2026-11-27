@@ -35,3 +35,5 @@ com.apple.MobileInternetSharing
 com.apple.OTACrashCopier
 com.apple.OTATaskingAgent
 com.apple.safetyalertsd
+# prueba de consumo (E-0425, autorizada por el Director el 2026-11-27): coreduetd giraba en un nucleo
+com.apple.coreduetd

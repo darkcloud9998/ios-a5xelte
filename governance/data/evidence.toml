@@ -6276,3 +6276,18 @@ sha256 = "37c14121f823f2404c8a1ed57c068aa7c0d69f4f7632a811ae522876598d6c7c"
 size = 4066
 immutable = true
 note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."
+
+[[evidence]]
+id = "E-0427"
+title = "DROP CON AUTORIZACIÓN EXPRESA (el Director, 2026-11-27: 'sí, DROP', respondiendo a la propuesta de UNA escritura en la zona DROP): autorun = hero-run de la CI mesa-ios 46069802023 (commit d634ddb, sha256 475d8789c33bc4bd1ec220b1e5d99a2f6060a95fa95dfd5c933b9c9474ee7776, anota nombres de proceso) y disabled.list = la lista que había en el teléfono (36 entradas) más com.apple.coreduetd; paquete 9808400853082344829 'verified'; PRUEBA: dos arranques (la lista de desactivados se aplica un arranque después), bloquear la pantalla, 10 minutos sin tocar, volver a TWRP; RIESGO: coreduetd es central y el arranque puede quedarse en el logo; vuelta atrás: reponer disabled.list.antes desde TWRP; BOOT no se ha tocado (sigue min136)"
+kind = "log"
+path = "/home/pioxi/HackiOS/evidencias/registro/E-0427-drop.txt"
+location = "scratch"
+created = "2026-11-27"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "c305b405f882a94f7bab84bc95cf666c613499abc173fa4da507ef3d0c890ef1"
+size = 175
+immutable = true
+note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."

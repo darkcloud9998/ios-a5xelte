@@ -49,7 +49,9 @@ cp dropbear scp "$OUT/"
 
 echo "== dash"
 cd "$WORK"/dash-0.5.13.6
-./configure --host=arm-apple-darwin CC="$CC" CC_FOR_BUILD="xcrun -sdk macosx clang" >configure.out 2>&1 || { tail -30 configure.out; exit 1; }
+# strchrnul() is in the SDK but only from iOS 18.4: autoconf finds it, it is NULL on the phone and the shell died on
+# its first command (2026-11-27)
+./configure --host=arm-apple-darwin CC="$CC" CC_FOR_BUILD="xcrun -sdk macosx clang" ac_cv_func_strchrnul=no >configure.out 2>&1 || { tail -30 configure.out; exit 1; }
 make -j4 >make.out 2>&1 || { grep -m20 -B3 'error' make.out; exit 1; }
 cp src/dash "$OUT/sh"
 
@@ -103,5 +105,13 @@ for f in dropbear scp sh toybox; do
   codesign -s - -f --entitlements "$HERE/ssh.entitlements" "$f"
   file "$f"
   otool -l "$f" | grep -A4 LC_BUILD_VERSION | grep -E 'platform|minos'
+done
+# Nothing may be weakly imported: such a symbol is newer than iOS 16 and NULL on the phone.
+for f in dropbear scp sh toybox; do
+  [ -f "$f" ] || continue
+  weak=$(nm -m "$f" | grep '(undefined) weak external' || true)
+  if [ -n "$weak" ]; then
+    echo "$f imports symbols that iOS 16 may not have:"; echo "$weak"; exit 1
+  fi
 done
 shasum -a 256 $(ls dropbear scp sh toybox 2>/dev/null) | tee SHA256SUMS

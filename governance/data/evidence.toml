@@ -6306,3 +6306,18 @@ sha256 = "5f5fa1f49e22eb0daeea2b27ed70d353fd60b79f17de01f95866cb733073abfa"
 size = 633
 immutable = true
 note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."
+
+[[evidence]]
+id = "E-0429"
+title = "CANAL SSH, CORRECCIONES TRAS LA PRIMERA PRUEBA EN EL TELÉFONO (D-0127): (1) arranque 1: Dropbear escuchaba y rechazaba la clave: dropbear.log '/ must be owned by user or root, and not writable by group or others' (la raíz de iOS admite escritura de grupo); corregido parando la comprobación en /private/var/herolte; (2) arranque 2: clave aceptada ('Pubkey auth succeeded for root') pero toda sesión moría con SEGV: el kernel registra CRASH sh sig 11 pc 0x0: dash llamaba a una función ausente en iOS 16 (atribuida a strchrnul, iOS 18.4+, por ser débil en el SDK 18.5); corregido (ac_cv_func_strchrnul=no) y la CI falla ahora ante cualquier símbolo débil sin definir; además dropbear ya no llama a initgroups() en el hijo (precaución, no era la causa demostrada); también quedó probado el apagado por tiempo (recovery) como código en marcha, aunque el Director volvió a TWRP a mano las dos veces; DROP nuevo verificado (programas de la CI 46075700928, sumas en el archivo), recovery.after '1500 2'"
+kind = "log"
+path = "/home/pioxi/HackiOS/evidencias/registro/E-0429-drop-y-sumas.txt"
+location = "scratch"
+created = "2026-11-27"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "07e22d2646c9a2a3d2cd43a8600441f3c491986f3c4d7f29f0125d88731fd67a"
+size = 716
+immutable = true
+note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."

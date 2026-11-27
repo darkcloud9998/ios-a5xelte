@@ -37,4 +37,10 @@ change("svr-auth.c", "\tsetusershell();\n",
 top = shell.rsplit("/", 3)[0]           # .../herolte from .../herolte/ssh/bin/sh
 change("svr-authpubkey.c", 'if (strcmp(path, ses.authstate.pw_dir) == 0 || strcmp(path, "/") == 0) {',
        f'if (strcmp(path, ses.authstate.pw_dir) == 0 || strcmp(path, "/") == 0 || strcmp(path, "{top}") == 0) {{')
+# The session child must not call initgroups() after fork (Directory Services from a forked child: the shell sessions
+# died with SIGSEGV on the phone, 2026-11-27, and this is the suspected cause). Only root logs in and the daemon is
+# root: there is nobody to switch to.
+change("svr-auth.c", "\tassert(ses.authstate.authdone);\n\n\t/* We can only change uid/gid as root ... */\n",
+       "\tassert(ses.authstate.authdone);\n\n\tif (ses.authstate.pw_uid == getuid()) {\n\t\treturn;\n\t}\n\n"
+       "\t/* We can only change uid/gid as root ... */\n")
 print("dropbear patched")

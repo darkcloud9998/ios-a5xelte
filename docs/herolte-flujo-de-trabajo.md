@@ -25,6 +25,13 @@ Nada que haya que conservar va a `/tmp` ni a la carpeta temporal de un trabajo d
 7. `tools/hero pull NOMBRE`, `tools/hero logs EXPRESIÓN`, `tools/hero power`.
 8. `tools/hero evidence ARCHIVO TÍTULO`, `python3 tools/governance.py render`, `check`, commit.
 
+## Pruebas sin tocar botones (pendiente de probar en el teléfono)
+
+`recovery.after` en la zona DROP, con el texto `SEGUNDOS VECES` (por ejemplo `900 3`): `hero-run` apaga iOS pasado ese
+tiempo y, como `herohalt=1` es el valor por defecto del kernel, el teléfono vuelve solo a TWRP. Desde TWRP el PC recoge
+(`tools/hero pull`) y arranca otra vez (`adb reboot`). Se detiene al gastar las VECES. No cubre un pánico ni un cuelgue
+anterior a `hero-run`: ahí siguen haciendo falta las teclas.
+
 ## Reglas que no cambian
 
 - Solo se escriben BOOT y la zona DROP; nunca EFS, RECOVERY ni cargadores.

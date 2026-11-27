@@ -6321,3 +6321,18 @@ sha256 = "07e22d2646c9a2a3d2cd43a8600441f3c491986f3c4d7f29f0125d88731fd67a"
 size = 716
 immutable = true
 note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."
+
+[[evidence]]
+id = "E-0430"
+title = "CANAL SSH EN FUNCIONAMIENTO Y PRIMERA INSPECCIÓN EN VIVO (D-0127, 2026-11-27 23:22): 'hero ssh' ejecuta órdenes como root en el iOS en marcha (Darwin 22.6.0 iPhone; disponible unos 150 s después de 'adb reboot'), 130 enlaces de toybox creados en ssh/bin, 'hero push' copia un archivo verificado y se borra después; con com.apple.coreduetd desactivado (E-0427) no aparece en ps y la CPU total del medidor cae de ~31600 ms por cada 30000 (E-0425) a 2400-5400 ms (1-2 % de 8 núcleos) tras el arranque, con nombres de proceso ya visibles; corriente con el cable puesto -32 a -122 mA (no comparable con la medida en batería de E-0425; la de batería está sin repetir); en el arranque anterior (ssh2) backboardd cayó dos veces con SIGSEGV y SpringBoard se relanzó (causa desconocida; las 31 caídas de sh son las sesiones fallidas de E-0429); recovery.after BORRADO por SSH para que los próximos arranques no vuelvan solos a TWRP (el de este arranque, 1500 s, sigue armado)"
+kind = "log"
+path = "/home/pioxi/HackiOS/evidencias/registro/E-0430-estado.txt"
+location = "scratch"
+created = "2026-11-27"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "7b4d3b95b286e3c21ca3d85ffdca00c363b4d614a823b6839581f5ce584c98b4"
+size = 19662
+immutable = true
+note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."

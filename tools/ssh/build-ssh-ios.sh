@@ -56,13 +56,15 @@ cp src/dash "$OUT/sh"
 echo "== toybox"
 cd "$WORK"/toybox-0.8.15
 # toybox is optional: if the iPhoneOS SDK lacks something of its macOS configuration, the channel ships without it.
+unset CC   # toybox takes CC as one command name; its configuration runs on the Mac
 if make macos_defconfig >config.out 2>&1 && HOSTCC="xcrun -sdk macosx clang" CC="$CLANG" CFLAGS="$TARGET" LDFLAGS="$TARGET" \
      make -j4 toybox >make.out 2>&1; then
   cp toybox "$OUT/"
   ./toybox >/dev/null 2>&1 || true
   sed -n 's/^CONFIG_\([A-Z0-9_]*\)=y$/\1/p' .config | tr 'A-Z' 'a-z' > "$OUT/toybox.config"
 else
-  grep -m30 -B3 'error' make.out || tail -30 config.out
+  grep -hm30 -B3 'error' make.out config.out 2>/dev/null | cut -c1-300 || true
+  tail -15 config.out
   echo "toybox NOT built"
 fi
 
@@ -74,4 +76,4 @@ for f in dropbear scp sh toybox; do
   file "$f"
   otool -l "$f" | grep -A4 LC_BUILD_VERSION | grep -E 'platform|minos'
 done
-shasum -a 256 dropbear scp sh toybox 2>/dev/null | tee SHA256SUMS
+shasum -a 256 $(ls dropbear scp sh toybox 2>/dev/null) | tee SHA256SUMS

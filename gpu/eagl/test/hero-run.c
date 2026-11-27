@@ -13,6 +13,10 @@
 #include <sys/resource.h>
 #include <sys/stat.h>
 #include <sys/sysctl.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <ifaddrs.h>
 /* the iOS SDK has no <sys/reboot.h> */
 extern int reboot(int);
 #define RB_HALT 0x08
@@ -502,6 +506,66 @@ recovery_timer(void *arg)
    sleep(5);
    if (reboot(RB_HALT) != 0)
       herodrm_log("hero-run: recovery: reboot failed: %s", strerror(errno));
+   return NULL;
+}
+
+/* The live channel (D-0127): with ssh.on in the drop, Dropbear (tools/ssh: public keys only, root only) listens on port
+ * 2222 for the PC's key in ssh/authorized_keys; its output goes to /private/var/tmp/dropbear.log and the Wi-Fi address
+ * to the kernel log. Removing ssh.on stops it at the next boot. */
+#define SSH_DIR DROP_DIR "ssh/"
+static void *
+ssh_server(void *unused)
+{
+   (void)unused;
+   static const struct { const char *path; mode_t mode; } own[] = {
+      { DROP_DIR, 0755 }, { SSH_DIR, 0755 }, { SSH_DIR "bin", 0755 }, { SSH_DIR "hostkey", 0600 }, { SSH_DIR "authorized_keys", 0600 },
+   };
+   for (unsigned i = 0; i < sizeof(own) / sizeof(own[0]); i++) {
+      if (chown(own[i].path, 0, 0) != 0 || chmod(own[i].path, own[i].mode) != 0) {
+         herodrm_log("hero-run: ssh: %s: %s: not started", own[i].path, strerror(errno));
+         return NULL;
+      }
+   }
+   char *args[] = { (char *)SSH_DIR "bin/dropbear", (char *)"-F", (char *)"-E", (char *)"-r", (char *)SSH_DIR "hostkey",
+      (char *)"-D", (char *)DROP_DIR "ssh", (char *)"-p", (char *)"2222", (char *)"-j", (char *)"-k",
+      (char *)"-P", (char *)"/private/var/run/herolte-dropbear.pid", NULL };
+   posix_spawn_file_actions_t fa;
+   posix_spawn_file_actions_init(&fa);
+   posix_spawn_file_actions_addopen(&fa, 0, "/dev/null", O_RDONLY, 0);
+   posix_spawn_file_actions_addopen(&fa, 1, "/private/var/tmp/dropbear.log", O_WRONLY | O_CREAT | O_APPEND, 0600);
+   posix_spawn_file_actions_adddup2(&fa, 1, 2);
+   for (int attempt = 1; attempt <= 5; attempt++) {
+      pid_t pid = 0;
+      int err = posix_spawn(&pid, args[0], &fa, NULL, args, environ);
+      if (err != 0) {
+         herodrm_log("hero-run: ssh: dropbear did not start: %s", strerror(err));
+         break;
+      }
+      herodrm_log("hero-run: ssh: dropbear pid %d on port 2222 (attempt %d)", (int)pid, attempt);
+      char shown[64] = "";
+      int status = 0;
+      while (waitpid(pid, &status, WNOHANG) == 0) {
+         struct ifaddrs *list = NULL;
+         if (getifaddrs(&list) == 0) {
+            for (struct ifaddrs *i = list; i; i = i->ifa_next) {
+               if (!i->ifa_addr || i->ifa_addr->sa_family != AF_INET || strncmp(i->ifa_name, "en", 2) != 0)
+                  continue;
+               char ip[INET_ADDRSTRLEN];
+               inet_ntop(AF_INET, &((struct sockaddr_in *)i->ifa_addr)->sin_addr, ip, sizeof(ip));
+               if (strcmp(ip, shown) != 0) {
+                  herodrm_log("hero-run: ssh: %s address %s", i->ifa_name, ip);
+                  snprintf(shown, sizeof(shown), "%s", ip);
+               }
+               break;
+            }
+            freeifaddrs(list);
+         }
+         sleep(20);
+      }
+      herodrm_log("hero-run: ssh: dropbear ended, status %#x", status);
+      sleep(10);
+   }
+   posix_spawn_file_actions_destroy(&fa);
    return NULL;
 }
 
@@ -2029,6 +2093,9 @@ main(int main_argc, char **main_argv)
    pthread_t recovery;
    if (recovery_seconds && pthread_create(&recovery, NULL, recovery_timer, (void *)(intptr_t)recovery_seconds) == 0)
       pthread_detach(recovery);
+   pthread_t ssh;
+   if (access(DROP_DIR "ssh.on", F_OK) == 0 && pthread_create(&ssh, NULL, ssh_server, NULL) == 0)
+      pthread_detach(ssh);
    pthread_t power;
    if (pthread_create(&power, NULL, power_sampler, NULL) == 0)
       pthread_detach(power);

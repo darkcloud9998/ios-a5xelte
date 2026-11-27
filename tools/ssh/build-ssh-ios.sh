@@ -60,15 +60,28 @@ unset CC   # toybox takes CC as one command name; its configuration runs on the 
 # toybox's scripts expect GNU sed on macOS
 brew list gnu-sed >/dev/null 2>&1 || brew install -q gnu-sed >/dev/null 2>&1 || true
 PATH="$(brew --prefix)/opt/gnu-sed/libexec/gnubin:$PATH"
-if make macos_defconfig >config.out 2>&1 && HOSTCC="xcrun -sdk macosx clang" CC="$CLANG" CFLAGS="$TARGET" LDFLAGS="$TARGET" \
-     make -j4 toybox >make.out 2>&1; then
+# Headers that toybox's macOS side includes and the iPhoneOS SDK leaves out are borrowed from the Mac SDK, one at a
+# time, as the compiler asks for them; they only declare what the same XNU kernel provides.
+MACSDK=$(xcrun -sdk macosx --show-sdk-path)
+SHIM="$WORK/shim"; mkdir -p "$SHIM"
+build_toybox() {
+  HOSTCC="xcrun -sdk macosx clang" CC="$CLANG" CFLAGS="$TARGET -I$SHIM" LDFLAGS="$TARGET" make -j4 toybox >make.out 2>&1
+}
+built=
+if make macos_defconfig >config.out 2>&1; then
+  for round in $(seq 1 15); do
+    if build_toybox; then built=1; break; fi
+    h=$(sed -n "s/.*fatal error: '\([^']*\)' file not found.*/\1/p" make.out | head -1)
+    [ -n "$h" ] && [ -f "$MACSDK/usr/include/$h" ] && [ ! -f "$SHIM/$h" ] || break
+    echo "borrowing $h from the Mac SDK"
+    mkdir -p "$SHIM/$(dirname "$h")"; cp "$MACSDK/usr/include/$h" "$SHIM/$h"
+  done
+fi
+if [ -n "$built" ]; then
   cp toybox "$OUT/"
-  ./toybox >/dev/null 2>&1 || true
   sed -n 's/^CONFIG_\([A-Z0-9_]*\)=y$/\1/p' .config | tr 'A-Z' 'a-z' > "$OUT/toybox.config"
 else
-  grep -hm30 -B3 'error' make.out config.out 2>/dev/null | cut -c1-300 || true
-  tail -15 config.out
-  bash -x scripts/genconfig.sh -d 2>&1 | tail -25 | cut -c1-200 || true
+  grep -m30 -B3 'error:' make.out | cut -c1-300 || tail -15 config.out
   echo "toybox NOT built"
 fi
 

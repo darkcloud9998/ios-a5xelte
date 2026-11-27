@@ -13,6 +13,7 @@
 #include <sys/resource.h>
 #include <sys/stat.h>
 #include <sys/sysctl.h>
+#include <sys/reboot.h>
 #include <dlfcn.h>
 #include <fcntl.h>
 #include <objc/message.h>
@@ -443,6 +444,65 @@ migration_restore(void)
  * next boot on. DROP_DIR disabled.list, one job a line, adds to them with no new build: 41 at once left SpringBoard
  * waiting for ever behind a black screen, so which ones are safe is found by trying.
  */
+/* recovery.after in the drop, "SECONDS TIMES": the phone halts SECONDS after hero-run starts, which with herohalt=1 in the
+ * boot line restarts into TWRP, so that a test needs nobody at the buttons. TIMES bounds it: the boots already used are
+ * counted in recovery.used, and a different recovery.after starts the count again. 120 <= SECONDS <= 86400, TIMES <= 50.
+ * Returns the seconds for this boot, or 0 to stay in iOS. The count is saved before returning: a boot that cannot save
+ * it does not restart. */
+static int
+recovery_arm(const char *dir)
+{
+   char path[256], want[64] = "", have[96] = "";
+   snprintf(path, sizeof(path), "%srecovery.after", dir);
+   FILE *f = fopen(path, "r");
+   if (!f)
+      return 0;
+   char *got = fgets(want, sizeof(want), f);
+   fclose(f);
+   int seconds = 0, times = 0;
+   if (!got || sscanf(want, "%d %d", &seconds, &times) != 2 || seconds < 120 || seconds > 86400 || times < 1 || times > 50)
+      return 0;
+   want[strcspn(want, "\r\n")] = 0;
+   snprintf(path, sizeof(path), "%srecovery.used", dir);
+   int used = 0;
+   f = fopen(path, "r");
+   if (f) {
+      if (fgets(have, sizeof(have), f)) {
+         char *bar = strchr(have, '|');
+         if (bar) {
+            *bar = 0;
+            if (strcmp(have, want) == 0)
+               used = atoi(bar + 1);
+         }
+      }
+      fclose(f);
+   }
+   if (used >= times)
+      return 0;
+   f = fopen(path, "w");
+   if (!f)
+      return 0;
+   int ok = fprintf(f, "%s|%d\n", want, used + 1) > 0;
+   ok = fflush(f) == 0 && fsync(fileno(f)) == 0 && ok;
+   ok = fclose(f) == 0 && ok;
+   return ok ? seconds : 0;
+}
+
+static void *
+recovery_timer(void *arg)
+{
+   int seconds = (int)(intptr_t)arg;
+   herodrm_log("hero-run: recovery: halting into TWRP in %d s (recovery.after)", seconds);
+   for (int left = seconds; left > 0;)
+      left = (int)sleep((unsigned)left);
+   herodrm_log("hero-run: recovery: halting now");
+   sync();
+   sleep(5);
+   if (reboot(RB_HALT) != 0)
+      herodrm_log("hero-run: recovery: reboot failed: %s", strerror(errno));
+   return NULL;
+}
+
 /* A logging profile for the Files stack: Subsystems/<name>.plist asks for debug level, persisted and with the private
  * arguments readable (Enable-Private-Data). Whether this build of libtrace honours it is what this tries (E-0416). */
 /* mkdir.list: folders to create empty, once, owned by mobile. Only inside an app-group container, and only a folder
@@ -1963,6 +2023,10 @@ main(int main_argc, char **main_argv)
    pthread_t devices;
    if (pthread_create(&devices, NULL, devices_start, NULL) == 0)
       pthread_detach(devices);
+   int recovery_seconds = recovery_arm(DROP_DIR);
+   pthread_t recovery;
+   if (recovery_seconds && pthread_create(&recovery, NULL, recovery_timer, (void *)(intptr_t)recovery_seconds) == 0)
+      pthread_detach(recovery);
    pthread_t power;
    if (pthread_create(&power, NULL, power_sampler, NULL) == 0)
       pthread_detach(power);

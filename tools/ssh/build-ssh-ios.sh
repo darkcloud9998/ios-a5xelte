@@ -69,12 +69,23 @@ build_toybox() {
 }
 built=
 if make macos_defconfig >config.out 2>&1; then
-  for round in $(seq 1 15); do
+  for round in $(seq 1 40); do
     if build_toybox; then built=1; break; fi
     h=$(sed -n "s/.*fatal error: '\([^']*\)' file not found.*/\1/p" make.out | head -1)
-    [ -n "$h" ] && [ -f "$MACSDK/usr/include/$h" ] && [ ! -f "$SHIM/$h" ] || break
-    echo "borrowing $h from the Mac SDK"
-    mkdir -p "$SHIM/$(dirname "$h")"; cp "$MACSDK/usr/include/$h" "$SHIM/$h"
+    if [ -n "$h" ] && [ -f "$MACSDK/usr/include/$h" ] && [ ! -f "$SHIM/$h" ]; then
+      echo "borrowing $h from the Mac SDK"
+      mkdir -p "$SHIM/$(dirname "$h")"; cp "$MACSDK/usr/include/$h" "$SHIM/$h"
+      continue
+    fi
+    # a command the iPhoneOS SDK cannot compile is left out
+    bad=$(sed -n 's/.*toys\/[a-z]*\/\([a-z0-9_]*\)\.c:[0-9]*:[0-9]*: .*error: .*/\1/p' make.out | tr 'a-z' 'A-Z' | sort -u)
+    changed=
+    for c in $bad; do
+      if grep -q "^CONFIG_$c=y" .config; then
+        echo "leaving out $c"; sed -i.bak "s/^CONFIG_$c=y/# CONFIG_$c is not set/" .config; changed=1
+      fi
+    done
+    [ -n "$changed" ] || break
   done
 fi
 if [ -n "$built" ]; then

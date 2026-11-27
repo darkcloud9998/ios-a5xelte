@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
-"""hero: el trabajo repetido del port HEROLTE en una sola orden. Ninguna orden escribe en el teléfono.
+"""hero: el trabajo repetido del port HEROLTE en una sola orden. Solo `ssh` y `push` pueden cambiar el teléfono (D-0127).
 
+  hero ssh [ORDEN]                 consola en el iOS en marcha (o ejecuta ORDEN); busca el teléfono en la Wi-Fi
+  hero push ARCHIVO RUTA           copia un archivo al iOS en marcha (solo bajo /private/var/)
   hero status                      teléfono, git, disco y contadores
   hero pull [NOMBRE]               desde TWRP: registro del kernel, registro unificado, census y consumo
   hero logs EXPRESIÓN [DIR]        busca en el registro unificado y en el del kernel (por defecto, la última recogida)
@@ -12,13 +14,16 @@ Rutas (se pueden cambiar con variables): HEROLTE_HOME (~/HackiOS), HEROLTE_ADB (
 Escribir BOOT o la zona DROP sigue siendo herolte-flash-boot.sh / herolte-drop.py, con autorización.
 """
 import collections
+import concurrent.futures
 import datetime
 import hashlib
+import ipaddress
 import json
 import os
 import pathlib
 import re
 import shutil
+import socket
 import statistics
 import struct
 import subprocess
@@ -259,6 +264,75 @@ def cmd_evidence(args):
     print("falta: python3 tools/governance.py render && check, y el commit")
 
 
+SSH_DIR = HOME / "lab" / "ssh"          # id_ed25519, known_hosts (the phone's host key) and the last address seen
+SSH_PORT = int(os.environ.get("HEROLTE_SSH_PORT", "2222"))
+PHONE_BIN = "/private/var/herolte/ssh/bin"
+
+
+def ssh_options():
+    return ["-i", str(SSH_DIR / "id_ed25519"), "-o", f"UserKnownHostsFile={SSH_DIR / 'known_hosts'}",
+            "-o", "GlobalKnownHostsFile=/dev/null", "-o", "HostKeyAlias=herolte", "-o", "StrictHostKeyChecking=yes",
+            "-o", "IdentitiesOnly=yes", "-o", "BatchMode=yes", "-o", "ConnectTimeout=8"]
+
+
+def port_open(ip, timeout=0.6):
+    with socket.socket() as s:
+        s.settimeout(timeout)
+        return s.connect_ex((ip, SSH_PORT)) == 0
+
+
+def is_phone(ip):
+    """Only the machine that proves it holds the phone's host key counts (and accepts our key)."""
+    r = run(["ssh", *ssh_options(), "-p", SSH_PORT, f"root@{ip}", "true"], timeout=30)
+    return r.returncode == 0
+
+
+def local_networks():
+    out = run(["ip", "-j", "-4", "addr", "show", "scope", "global"], timeout=15).stdout
+    for link in json.loads(out or "[]"):
+        for a in link.get("addr_info", []):
+            ip = ipaddress.ip_address(a["local"])
+            if ip.is_private:
+                yield ipaddress.ip_network(f"{ip}/24", strict=False)
+
+
+def find_phone():
+    if os.environ.get("HEROLTE_IP"):
+        return os.environ["HEROLTE_IP"]
+    cache = SSH_DIR / "host"
+    if cache.exists():
+        ip = cache.read_text().strip()
+        if port_open(ip, 3) and is_phone(ip):
+            return ip
+    for net in local_networks():
+        hosts = [str(h) for h in net.hosts()]
+        with concurrent.futures.ThreadPoolExecutor(64) as pool:
+            found = [h for h, ok in zip(hosts, pool.map(port_open, hosts)) if ok]
+        for ip in found:
+            if is_phone(ip):
+                cache.write_text(ip + "\n")
+                return ip
+    sys.exit("no encuentro el teléfono por SSH: ¿está en iOS, en la misma Wi-Fi y con ssh.on?")
+
+
+def cmd_ssh(args):
+    ip = find_phone()
+    command = ["ssh", *ssh_options(), "-p", str(SSH_PORT), f"root@{ip}", *args]
+    sys.exit(subprocess.run(command).returncode)
+
+
+def cmd_push(args):
+    if len(args) != 2 or not pathlib.Path(args[0]).is_file():
+        sys.exit("uso: hero push ARCHIVO RUTA_EN_EL_TELÉFONO")
+    if not args[1].startswith("/private/var/") or ".." in args[1]:
+        sys.exit("destino fuera de /private/var/: no")
+    ip = find_phone()
+    r = run(["scp", "-O", *ssh_options(), "-P", SSH_PORT, "-S", "ssh", args[0], f"root@{ip}:{args[1]}"], timeout=600)
+    if r.returncode:
+        sys.exit(r.stderr)
+    print(sha256(args[0]), "->", args[1])
+
+
 def cmd_status(_):
     devices = run([ADB, "devices"], timeout=30).stdout.strip().splitlines()[1:]
     print("teléfono:", ", ".join(d.split("\t")[-1] for d in devices) or "no conectado")
@@ -277,7 +351,7 @@ def cmd_status(_):
     print("autorizaciones de escritura vigentes:", ", ".join(f"{i} hasta {v}" for i, v in live) or "ninguna con plazo")
 
 
-COMMANDS = dict(status=cmd_status, pull=cmd_pull, logs=cmd_logs, power=cmd_power, ci=cmd_ci, evidence=cmd_evidence)
+COMMANDS = dict(ssh=cmd_ssh, push=cmd_push, status=cmd_status, pull=cmd_pull, logs=cmd_logs, power=cmd_power, ci=cmd_ci, evidence=cmd_evidence)
 
 if __name__ == "__main__":
     if len(sys.argv) < 2 or sys.argv[1] not in COMMANDS:

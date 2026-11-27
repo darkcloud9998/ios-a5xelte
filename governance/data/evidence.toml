@@ -6291,3 +6291,18 @@ sha256 = "c305b405f882a94f7bab84bc95cf666c613499abc173fa4da507ef3d0c890ef1"
 size = 175
 immutable = true
 note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."
+
+[[evidence]]
+id = "E-0428"
+title = "DROP DEL CANAL SSH (autorizado por D-0127): paquete 16840099563606765014 'verified', 1085440 B: autorun = hero-run CI mesa-ios 46072136168 (sha256 33f89f86538243f936928b08f4eab0f2850355ed73e784f7ee3ed79866f7ead6: arranca el canal si hay ssh.on y apaga a TWRP según recovery.after), ssh/bin/{dropbear,scp,sh,toybox} de la CI herolte-ssh 46073170785 (Dropbear 2026.94 solo clave y solo root, firma GPG de las sumas comprobada; dash 0.5.13.6; toybox 0.8.15 sin readahead), clave de máquina y authorized_keys generadas en el PC (privadas, fuera de git), ssh.on, recovery.after='1200 2' (dos arranques de 20 minutos y vuelta a TWRP); probado solo en el PC (mismo programa de claves: ssh y scp correctos); BOOT sin tocar"
+kind = "log"
+path = "/home/pioxi/HackiOS/evidencias/registro/E-0428-drop.txt"
+location = "scratch"
+created = "2026-11-27"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "5f5fa1f49e22eb0daeea2b27ed70d353fd60b79f17de01f95866cb733073abfa"
+size = 633
+immutable = true
+note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."

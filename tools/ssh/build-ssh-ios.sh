@@ -57,6 +57,9 @@ echo "== toybox"
 cd "$WORK"/toybox-0.8.15
 # toybox is optional: if the iPhoneOS SDK lacks something of its macOS configuration, the channel ships without it.
 unset CC   # toybox takes CC as one command name; its configuration runs on the Mac
+# toybox's scripts expect GNU sed on macOS
+brew list gnu-sed >/dev/null 2>&1 || brew install -q gnu-sed >/dev/null 2>&1 || true
+PATH="$(brew --prefix)/opt/gnu-sed/libexec/gnubin:$PATH"
 if make macos_defconfig >config.out 2>&1 && HOSTCC="xcrun -sdk macosx clang" CC="$CLANG" CFLAGS="$TARGET" LDFLAGS="$TARGET" \
      make -j4 toybox >make.out 2>&1; then
   cp toybox "$OUT/"
@@ -65,6 +68,7 @@ if make macos_defconfig >config.out 2>&1 && HOSTCC="xcrun -sdk macosx clang" CC=
 else
   grep -hm30 -B3 'error' make.out config.out 2>/dev/null | cut -c1-300 || true
   tail -15 config.out
+  bash -x scripts/genconfig.sh -d 2>&1 | tail -25 | cut -c1-200 || true
   echo "toybox NOT built"
 fi
 

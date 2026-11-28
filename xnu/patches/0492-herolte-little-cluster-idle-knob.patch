@@ -1,0 +1,170 @@
+herolte: kern.hero_little_idle lowers the little cluster while the screen is off (0492, D-0128)
+
+Screen-off current is ~340 mA against 25-35 mA for Linux on this phone (E-0288, E-0434); the little cluster stays at 1066 MHz and 0.819 V. With the sysctl at 1 and the screen off for 10 s the power thread takes it to 533 MHz (boot PLL, post divider 2, the ECT dividers of 546 MHz) and 0.675 V, and back when the screen comes on, the sysctl is 0 or the phone halts. Off by default: an experiment to be measured A/B over SSH in one boot. Same primitives and boot-state check as 0465.
+
+--- a/bsd/dev/herolte_gpu.c
++++ b/bsd/dev/herolte_gpu.c
+@@ -22,6 +22,7 @@
+ #include <mach/mach_time.h>
+ #include <machine/machine_routines.h>
+ #include <pexpert/pexpert.h>
++#include <sys/sysctl.h>
+ 
+ extern vm_offset_t ml_io_map(vm_offset_t, vm_size_t);
+ void herolte_gpu_probe(void);
+@@ -2686,12 +2687,13 @@
+ static const struct {
+ 	uint16_t off;
+ 	uint8_t bits;
+-	uint8_t at1066, at1378, at1586;
++	uint8_t at1066, at1378, at1586, atidle;
+ } ap_divs[] = {         /* ECT dvfs_little rows 1066/1378/1586: ACLK PCLK ATCLK PCLK_DBG CNTCLK APOLLO_PLL PROMISE RUN_MONITOR */
+-	{ 0x404, 3, 2, 2, 2 }, { 0x410, 4, 7, 8, 9 }, { 0x408, 4, 5, 5, 5 }, { 0x40c, 4, 7, 8, 9 },
+-	{ 0x414, 4, 5, 5, 5 }, { 0x420, 3, 1, 1, 1 }, { 0x41c, 3, 3, 4, 4 }, { 0x418, 3, 5, 5, 5 },
++	{ 0x404, 3, 2, 2, 2, 2 }, { 0x410, 4, 7, 8, 9, 6 }, { 0x408, 4, 5, 5, 5, 4 }, { 0x40c, 4, 7, 8, 9, 6 },
++	{ 0x414, 4, 5, 5, 5, 4 }, { 0x420, 3, 1, 1, 1, 1 }, { 0x41c, 3, 3, 4, 4, 1 }, { 0x418, 3, 5, 5, 5, 4 },
+ };
+ #define AP_NDIVS (sizeof(ap_divs) / sizeof(ap_divs[0]))
++#define AP_IDLE_ROW 546u        /* 0492: the ECT row of 546 MHz, used at 533 */
+ static struct {
+ 	bool done, high, broken;
+ 	vm_offset_t cmu;
+@@ -2723,9 +2725,9 @@
+ }
+ 
+ static bool
+-ap_relock(uint32_t m)
++ap_relock_s(uint32_t m, uint32_t post)
+ {
+-	uint32_t bits = (m << 16) | (3u << 8) | (1u << 5);
++	uint32_t bits = (m << 16) | (3u << 8) | (1u << 5) | post;
+ 	uint32_t con0 = (hg_rd(ap.cmu, 0x100) & ~HC_PLL_BITS) | (bits & HC_PLL_BITS);
+ 	hg_wr(ap.cmu, 0x000, 3 * 150);
+ 	hg_wr(ap.cmu, 0x100, con0);
+@@ -2739,6 +2741,12 @@
+ }
+ 
+ static bool
++ap_relock(uint32_t m)
++{
++	return ap_relock_s(m, 0);
++}
++
++static bool
+ ap_volt(uint8_t sel)
+ {
+ 	uint8_t set = 0;
+@@ -2769,7 +2777,8 @@
+ ap_set_divs(unsigned which)
+ {
+ 	for (unsigned i = 0; i < AP_NDIVS; i++) {
+-		uint32_t want = which == 1586 ? ap_divs[i].at1586 : which == 1378 ? ap_divs[i].at1378 : ap_divs[i].at1066;
++		uint32_t want = which == 1586 ? ap_divs[i].at1586 : which == 1378 ? ap_divs[i].at1378 : which == AP_IDLE_ROW ? ap_divs[i].atidle :
++		    ap_divs[i].at1066;
+ 		uint32_t mask = (1u << ap_divs[i].bits) - 1;
+ 		if ((hg_rd(ap.cmu, ap_divs[i].off) & mask) != want) {
+ 			hg_wr(ap.cmu, ap_divs[i].off, (hg_rd(ap.cmu, ap_divs[i].off) & ~mask) | want);
+@@ -2824,6 +2833,87 @@
+ 	return true;
+ }
+ 
++/*
++ * 0492 (D-0128): kern.hero_little_idle=1 lets the power thread lower the little cluster while the screen has been off
++ * for 10 s, and brings it back as soon as the screen is on again or the sysctl is 0. 533 MHz is the boot PLL setting
++ * with its post divider at 2 (M 123, P 3, S 1: the VCO does not move) with the dividers of the ECT's 546 MHz row; the
++ * voltage is 0.675 V (0x3c), 25 mV above what Linux held this phone's cluster at for 546 MHz (E-0314). Off by default.
++ * kern.hero_little_state: 0 as booted, 1 lowered, -1 given up (nothing more is written).
++ */
++static int ap_idle_want;
++static int ap_idle_state;
++SYSCTL_INT(_kern, OID_AUTO, hero_little_idle, CTLFLAG_RW | CTLFLAG_LOCKED, &ap_idle_want, 0,
++    "HEROLTE: lower the little cluster while the screen is off");
++SYSCTL_INT(_kern, OID_AUTO, hero_little_state, CTLFLAG_RD | CTLFLAG_LOCKED, &ap_idle_state, 0,
++    "HEROLTE: the little cluster: 0 as booted, 1 lowered, -1 given up");
++
++static void
++ap_idle_follow(bool screen_off_long, unsigned boot_arg_mhz)
++{
++	bool want = ap_idle_want != 0 && screen_off_long && !boot_arg_mhz;
++	if (want == (ap_idle_state == 1) || ap_idle_state < 0 || ap.broken) {
++		if (ap.broken && ap_idle_want) {
++			ap_idle_state = -1;
++		}
++		return;
++	}
++	if (!ap.done) {
++		if (!hc.top || !hc.saved) {
++			return;
++		}
++		ap.cmu = ml_io_map(AP_CMU_PA, 0x1000);
++		if (!ap.cmu || !ap_check_boot_state()) {
++			printf("HEROLTE LITTLE: idle: the cluster is not in the 1066 MHz state of the table: nothing is written\n");
++			ap.broken = true;
++			ap_idle_state = -1;
++			return;
++		}
++		ap.done = true;
++	}
++	static unsigned changes;
++	bool say = ++changes <= 40 || changes % 100 == 0;
++	if (want) {
++		/* down: the clock first (still at 0.819 V), the voltage after */
++		ap_to_switch();
++		if (!ap_relock_s(123, 1)) {
++			printf("HEROLTE LITTLE: idle: APOLLO_PLL did not lock (%#x): stays on the switch\n", hg_rd(ap.cmu, 0x100));
++			ap.broken = true;
++			ap_idle_state = -1;
++			return;
++		}
++		ap_set_divs(AP_IDLE_ROW);
++		ap_from_switch();
++		ap_idle_state = 1;
++		bool ok = ap_volt(0x3c);
++		if (!ok) {
++			ap_volt(0x53);          /* the voltage did not take: keep the booted one with the low clock */
++		}
++		if (say || !ok) {
++			printf("HEROLTE LITTLE: idle: 533 MHz (con0 %#x), vdd_apollo 0x3c %s (change %u)\n", hg_rd(ap.cmu, 0x100),
++			    ok ? "set" : "FAILED", changes);
++		}
++	} else {
++		/* up: the voltage first; without it the clock is not raised (tried again at the next pass) */
++		if (!ap_volt(0x53)) {
++			printf("HEROLTE LITTLE: idle: vdd_apollo 0x53 FAILED: the cluster stays at 533 MHz\n");
++			return;
++		}
++		ap_set_divs(1066);
++		ap_to_switch();
++		if (!ap_relock(123)) {
++			printf("HEROLTE LITTLE: idle: APOLLO_PLL did not lock at 1066 (%#x)\n", hg_rd(ap.cmu, 0x100));
++			ap.broken = true;
++			ap_idle_state = -1;
++			return;
++		}
++		ap_from_switch();
++		ap_idle_state = 0;
++		if (say) {
++			printf("HEROLTE LITTLE: idle: back to 1066 MHz (con0 %#x), vdd_apollo 0x53 (change %u)\n", hg_rd(ap.cmu, 0x100), changes);
++		}
++	}
++}
++
+ /* Called from the power thread with the big cluster's governor decision; the first call checks the state and may decide never to touch it. */
+ static void
+ ap_follow(bool want_low, unsigned mhz)
+@@ -4400,6 +4490,7 @@
+ 			}
+ 		}
+ 		ap_follow(want_low, little_mhz);
++		ap_idle_follow(off != 0 && ns > 10ull * NSEC_PER_SEC, little_mhz);     /* 0492 */
+ 		if (cycle_s >= 20 && hc.high && !hot_now && !screen_off && hg_policy <= 1) {
+ 			uint64_t el = 0;
+ 			if (cycle_at == 0) {
+@@ -5626,6 +5717,7 @@
+ 	boolean_t recovery = (mode >= 2 && !off) || (type != 1 && !off);     /* 1 = kPERestartCPU (IOKit/IOPlatformExpert.h; not visible from C here) */
+ 	printf("HEROLTE: herohalt=%u: %s in 12 s (PS_HOLD_CONTROL %#x)\n", mode,
+ 	    off ? "power off" : (recovery ? "restart into recovery" : "restart"), *(volatile uint32_t *)(pmu + 0x330c));
++	ap_idle_want = 0;       /* 0492: the little cluster's booted clock and voltage before the reset */
+ 	hg_msleep(12000);
+ 	if (off) {
+ 		/* 0429: PS_HOLD_CONTROL read 0x5300 here (E-0248): bit 8 is the data bit S-Boot leaves high; clearing it is what

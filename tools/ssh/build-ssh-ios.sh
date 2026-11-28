@@ -98,8 +98,11 @@ else
   echo "toybox NOT built"
 fi
 
+echo "== hero-images"
+"$CLANG" $TARGET -O2 -Wall -o "$OUT/hero-images" "$HERE/hero-images.c"
+
 cd "$OUT"
-for f in dropbear scp sh toybox; do
+for f in dropbear scp sh toybox hero-images; do
   [ -f "$f" ] || continue
   strip "$f" 2>/dev/null || true
   codesign -s - -f --entitlements "$HERE/ssh.entitlements" "$f"
@@ -107,11 +110,11 @@ for f in dropbear scp sh toybox; do
   otool -l "$f" | grep -A4 LC_BUILD_VERSION | grep -E 'platform|minos'
 done
 # Nothing may be weakly imported: such a symbol is newer than iOS 16 and NULL on the phone.
-for f in dropbear scp sh toybox; do
+for f in dropbear scp sh toybox hero-images; do
   [ -f "$f" ] || continue
   weak=$(nm -m "$f" | grep '(undefined) weak external' || true)
   if [ -n "$weak" ]; then
     echo "$f imports symbols that iOS 16 may not have:"; echo "$weak"; exit 1
   fi
 done
-shasum -a 256 $(ls dropbear scp sh toybox 2>/dev/null) | tee SHA256SUMS
+shasum -a 256 $(ls dropbear scp sh toybox hero-images 2>/dev/null) | tee SHA256SUMS

@@ -6336,3 +6336,18 @@ sha256 = "7b4d3b95b286e3c21ca3d85ffdca00c363b4d614a823b6839581f5ce584c98b4"
 size = 19662
 immutable = true
 note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."
+
+[[evidence]]
+id = "E-0431"
+title = "EL APAGADO POR TIEMPO FUNCIONÓ SOLO (arranque del 2026-11-27 23:19, recovery.after '1500 2'): el registro del kernel muestra 'hero-run: recovery: halting into TWRP in 1500 s', 'CPU halted' y 'HEROLTE: herohalt=1: restart into recovery in 12 s'; el Director encontró el teléfono en TWRP al día siguiente ('está en twrp'); sin caídas registradas en ese arranque; batería 89 % en TWRP el 28; con esto el ciclo sin botones (adb reboot -> iOS con SSH -> apagado por tiempo -> TWRP) está probado de extremo a extremo"
+kind = "log"
+path = "/home/pioxi/HackiOS/evidencias/registro/E-0431-kernel.txt"
+location = "scratch"
+created = "2026-11-28"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "b754a8e93b2871b4f89c32ab588351cc5e4319e8d768655a8bbdf5e6341549ab"
+size = 343709
+immutable = true
+note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."

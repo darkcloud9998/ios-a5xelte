@@ -6426,3 +6426,18 @@ sha256 = "50bb0a0604e48de66c06b1c0cdbcc1beb7f4de257d82e9799cfbf9c26269652a"
 size = 175
 immutable = true
 note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."
+
+[[evidence]]
+id = "E-0437"
+title = "backboardd SIGUE ESTABLE CON LA CORRECCIÓN DE ALINEACIÓN (segunda comprobación, 2026-11-28, arranque de las 12:00): el Director dice 'he tocado cosas'; backboardd (pid 53) y SpringBoard (27) son los primeros procesos del arranque tras unos 25-30 minutos con más de 80 s de CPU de backboardd (uso real); en los arranques sin corrección backboardd caía; no se ha leído todavía el registro del kernel de este arranque (los mensajes de la guarda se leen desde TWRP)"
+kind = "log"
+path = "/home/pioxi/HackiOS/evidencias/registro/E-0437-estado.txt"
+location = "scratch"
+created = "2026-11-28"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "62713b8df3342a35a364174675f0a5e281e251d0bc4a4987f15821e373fee85a"
+size = 1548
+immutable = true
+note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."

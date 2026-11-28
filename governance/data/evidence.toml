@@ -6456,3 +6456,33 @@ sha256 = "62713b8df3342a35a364174675f0a5e281e251d0bc4a4987f15821e373fee85a"
 size = 1548
 immutable = true
 note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."
+
+[[evidence]]
+id = "E-0439"
+title = "CORRECCIÓN DE ALINEACIÓN CONFIRMADA EN USO (arranque 12:00-12:29, registro leído desde TWRP): backboardd un solo lanzamiento (pid 53) sin ninguna caída registrada en 1680 s de vida y uso real; la corrección actuó 3 veces ('upload 1105x1160 with alignment 8 is laid out with alignment 4' y 1271x1823 dos veces), justo las medidas que antes mataban el proceso; al apagar, hero-twrp por SSH llevó el teléfono a TWRP"
+kind = "log"
+path = "/home/pioxi/HackiOS/evidencias/registro/E-0439-backboardd.txt"
+location = "scratch"
+created = "2026-11-28"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "5fcadfd4e4337794c9ae402b31353a92c767b34db3830e690ef84d52bd0dfb69"
+size = 1520
+immutable = true
+note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."
+
+[[evidence]]
+id = "E-0440"
+title = "min137 ESCRITA EN BOOT (autorización D-0128, 'Si, autorizo'): kernel CI xnu-fast 46138706966 (commit 539fa7a, suma coincide; único cambio frente a min136: parche 0492, kern.hero_little_idle apagado por defecto), misma línea de arranque que min136 (603 caracteres), imagen sha256 f2936addd3d299c86fa269ce0d79d42605179f32e207ec5a3789df752f58fcbb, verificador 36 PASS 0 FAIL, escrita y leída de vuelta, EFS intacto; el programa de escritura DENEGÓ el primer intento porque la tarea T-0012 citaba D-0090 caducada: se actualizó T-0012 a D-0128 y se repitió; arranque posterior correcto: SSH a las 12:33:33, kern.hero_little_idle=0 y kern.hero_little_state=0, backboardd 53 y SpringBoard 27; vuelta atrás: min136 (sha256 56d3312c5cb6f13b05c16b4d7bd0bd3444717f05e40ddda09b90b1ac8a3e80b7). EL INTERRUPTOR NO SE HA ACTIVADO TODAVÍA"
+kind = "log"
+path = "/home/pioxi/HackiOS/evidencias/registro/E-0440-flash.log"
+location = "scratch"
+created = "2026-11-28"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "508eb7f9e170d9ea0e51f5d2a0a3ce6feae74c79987b473e12a3bd420d54211b"
+size = 703
+immutable = true
+note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."

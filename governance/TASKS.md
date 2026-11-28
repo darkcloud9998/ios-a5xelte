@@ -59,7 +59,7 @@ Ordenada por prioridad (1 = la más urgente). "Nivel" = el más alto de sus acci
 | T-0061 | done | 8 | ingeniero | Actualización grande n.º 1: CI de kernel (0361, 0362) y de mesa-ios (hero-run con files.remove), luego min37 y el paquete DROP 4 (D-0081) | — | C rojo | — |
 | T-0062 | ready | 8 | ingeniero | Ciclo grande n.º 2: serie segura (sin 0339-0343), kernel 0428/0429, imagen min40 con heroaudio=3 y paquete DROP 6 de audio (docs/S7GE_CICLO_2.md) | — | C rojo | — |
 | T-0063 | ready | 8 | ingeniero | Energía y térmica (docs/S7GE_ENERGIA_TERMICA_ARQUITECTURA_20261117.md): instrumentación, gobernador de CPU, dominios de energía, reposo profundo y carga, una prueba por cambio | — | C rojo | — |
-| T-0012 | blocked | 9 | ingeniero | Pruebas N1 (sonda) y N2 (XNU solo lectura) en el S7: escribir BOOT desde TWRP | T-0013 | C rojo | D-0126 sin firmar: las autorizaciones D-0090 (22/11) y D-0123 (23/11) han caducado |
+| T-0012 | in_progress | 9 | ingeniero | Pruebas N1 (sonda) y N2 (XNU solo lectura) en el S7: escribir BOOT desde TWRP | T-0013 | C rojo | — |
 | T-0013 | done | 9 | director | Decidir el cargador de las pruebas: el de clang (conveniencia) o compilar con el GCC aarch64 de Arm | — | A verde | — |
 | T-0016 | done | 9 | ingeniero | Aplicar la renumeración de parches y fusionar con origin/herolte (si el jefe técnico aprueba D-0008) | T-0009 | B amarillo | — |
 | T-0042 | ready | 9 | ingeniero | Leer desde TWRP (solo lectura) el marcador de RAM de start.s para saber si hubo reinicio/reentrada | — | C rojo | — |

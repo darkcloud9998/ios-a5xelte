@@ -6441,3 +6441,18 @@ sha256 = "62713b8df3342a35a364174675f0a5e281e251d0bc4a4987f15821e373fee85a"
 size = 1548
 immutable = true
 note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."
+
+[[evidence]]
+id = "E-0438"
+title = "CORRECCIÓN DE E-0437: la duración que escribí es FALSA: el teléfono arrancó a las 12:00:06 (SSH a las 12:02:36) y la comprobación es de las 12:08:02, así que llevaba unos 8 minutos, NO 25-30; los 85 s de CPU de backboardd son de esos 8 minutos de uso; lo demás (pid 53 y 27 sin relanzarse) es correcto; la estabilidad con la corrección de alineación está comprobada solo durante ese tiempo"
+kind = "log"
+path = "/home/pioxi/HackiOS/evidencias/registro/E-0438-estado.txt"
+location = "scratch"
+created = "2026-11-28"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "62713b8df3342a35a364174675f0a5e281e251d0bc4a4987f15821e373fee85a"
+size = 1548
+immutable = true
+note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."

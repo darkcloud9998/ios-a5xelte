@@ -6351,3 +6351,18 @@ sha256 = "b754a8e93b2871b4f89c32ab588351cc5e4319e8d768655a8bbdf5e6341549ab"
 size = 343709
 immutable = true
 note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."
+
+[[evidence]]
+id = "E-0432"
+title = "CAUSA DE LAS CAÍDAS DE backboardd LOCALIZADA Y CORRECCIÓN INSTALADA EN VIVO (primer ciclo completo por SSH): con la nueva herramienta hero-images (lista de bibliotecas de un proceso en marcha) los desplazamientos de la pila de las caídas se resuelven: SIGSEGV en _util_copy_rect (libOSMesa) llamado desde _my_glTexImage2D de nuestra capa hakios-gl (instalada como libheroeagl.dylib): Mesa lee más allá del final de un mapeo de solo lectura (etiqueta 51) al subir una textura; la misma caída se repitió en el arranque del 28 antes de instalar la corrección (launch 1, pc de la caché compartida, lr 0x101f1ce70); CORRECCIÓN (commit 6c102c0, CI mesa-ios 46133892159, sha256 0d21ad873de0014dfe5ff0efc4526f6e240f7d8f003ab0feb689407341d0d5ec): antes de subir texturas de 16 KB o más se comprueba qué parte del origen se puede leer; se suben solo las filas legibles y se anota; instalada por SSH con copia libheroeagl.dylib.orig-20261128; POR QUÉ CoreAnimation entrega menos memoria de la esperada NO se sabe; AVISO APRENDIDO: el kernel solo inserta la capa en los 2 primeros lanzamientos de backboardd por arranque: al matarlo yo fue el 3º y quedó sin ella (estado esperado del kernel, no fallo de la biblioteca); se volvió a TWRP con la nueva hero-twrp por SSH y 'adb reboot'; en el arranque siguiente el pid 53 carga la biblioteca nueva; ESTABILIDAD AÚN POR CONFIRMAR"
+kind = "log"
+path = "/home/pioxi/HackiOS/evidencias/registro/E-0432-analisis.txt"
+location = "scratch"
+created = "2026-11-28"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "fe7093479571517fc36a05865895cbc6d287320c485b22ec03ab7a3a7179cd10"
+size = 1034
+immutable = true
+note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."

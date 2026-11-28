@@ -6366,3 +6366,18 @@ sha256 = "fe7093479571517fc36a05865895cbc6d287320c485b22ec03ab7a3a7179cd10"
 size = 1034
 immutable = true
 note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."
+
+[[evidence]]
+id = "E-0433"
+title = "backboardd ESTABLE TRAS LA CORRECCIÓN (primera comprobación, 2026-11-28 11:27): unos 10 minutos después del arranque de las 11:17, con el Director usando el teléfono (Safari incluido: 'lo he usado'), backboardd sigue con su primer proceso (pid 53, 101 s de CPU) y SpringBoard con el 27; en los arranques anteriores había caído; ES UNA SEÑAL, NO UNA PRUEBA de que el fallo esté resuelto; sin comprobar todavía si la guarda llegó a activarse (su mensaje va al registro del kernel, que se lee desde TWRP)"
+kind = "log"
+path = "/home/pioxi/HackiOS/evidencias/registro/E-0433-estable.txt"
+location = "scratch"
+created = "2026-11-28"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "d5b380ce1a10ba962e59c9e4cecd82a79a14ebeacd9ee55e4e3d013b78547e08"
+size = 24077
+immutable = true
+note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."

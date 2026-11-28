@@ -3711,7 +3711,7 @@ readable_bytes(const void *from, size_t want)
  * the source is checked as OpenGL ES will walk it, with the unpack state in force.
  */
 static GLsizei
-readable_rows(GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels)
+readable_rows(GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels, GLint *fix_alignment)
 {
 	GLint row_length = 0, alignment = 4, skip_rows = 0, skip_pixels = 0;
 	size_t pixel = bytes_a_pixel(format, type);
@@ -3741,6 +3741,26 @@ readable_rows(GLsizei width, GLsizei height, GLenum format, GLenum type, const v
 
 	if (have >= need) {
 		return height;
+	}
+	/*
+	 * Seen on the phone (2026-11-28): CoreAnimation's pictures of an odd width with an alignment of 8 in force are laid
+	 * out with rows of exactly width * 4 bytes (1105x1160 and 1271x1823 BGRA in whole 16 KiB pages: 313 and 566, one
+	 * page less than rows rounded up to 8 would need). Read with 8, each row starts 4 bytes late (a slanted picture) and
+	 * the last one is past the end. With 4 it all fits: that is the layout then.
+	 */
+	if (alignment > 4) {
+		size_t stride4 = ((size_t)(row_length > 0 ? row_length : width) * pixel + 3) / 4 * 4;
+		size_t need4 = (size_t)skip_rows * stride4 + (size_t)skip_pixels * pixel + (size_t)(height - 1) * stride4 + used;
+
+		if (stride4 < stride && have >= need4) {
+			if (said < 20) {
+				said++;
+				say("hakios-gl: upload %dx%d with alignment %d is laid out with alignment 4 (%zu of %zu bytes readable)\n",
+				    width, height, alignment, have, need);
+			}
+			*fix_alignment = alignment;
+			return height;
+		}
 	}
 	GLsizei rows = have < first + used ? 0 : (GLsizei)((have - first - used) / stride) + 1;
 	if (said < 20) {
@@ -3777,11 +3797,18 @@ my_glTexImage2D(void *context, GLenum target, GLint level, GLint internal, GLsiz
 		group_forget(e, e->bound[e->unit]);
 	}
 	uint64_t began = slow_calls_us != 0 ? now_us() : 0;
-	GLsizei rows = readable_rows(width, height, format, type, pixels);
+	GLint was_alignment = 0;
+	GLsizei rows = readable_rows(width, height, format, type, pixels, &was_alignment);
+	if (was_alignment != 0) {
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+	}
 	glTexImage2D(target, level, (GLint)internal_format((GLenum)internal, format), width, height, border, format, type,
 	    rows == height ? pixels : NULL);
 	if (rows > 0 && rows < height) {
 		glTexSubImage2D(target, level, 0, 0, width, rows, format, type, pixels);
+	}
+	if (was_alignment != 0) {
+		glPixelStorei(GL_UNPACK_ALIGNMENT, was_alignment);
 	}
 	if (began != 0 && now_us() - began >= slow_calls_us) {
 		/* (with glslow=US: which pictures take long to hand over) */

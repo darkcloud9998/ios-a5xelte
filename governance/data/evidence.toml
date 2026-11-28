@@ -6411,3 +6411,18 @@ sha256 = "eb6a5b98be08ab9393cf78241dff33d65528c7916db747ddf725ed9f101b3522"
 size = 904
 immutable = true
 note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."
+
+[[evidence]]
+id = "E-0436"
+title = "DROP (D-0127) de la corrección de alineación: lib/libheroeagl.dylib = libhakiosgl de la CI mesa-ios 46137620015 (sha256 1cddeca4ab1098ab17f4027f9d8c55a4e80e8a732a5c3897a2fa48275d55445c), paquete 7195379307294574969 'verified'; arranque desde TWRP con SSH a las 12:02:36: la suma en el teléfono coincide y backboardd (pid 53) la tiene cargada; PENDIENTE: que el Director confirme que no hay imágenes inclinadas ni cortadas y que no vuelve a caer; BOOT sin tocar"
+kind = "log"
+path = "/home/pioxi/HackiOS/evidencias/registro/E-0436-drop.txt"
+location = "scratch"
+created = "2026-11-28"
+domain = "device"
+level = "L2"
+device = "this-unit"
+sha256 = "50bb0a0604e48de66c06b1c0cdbcc1beb7f4de257d82e9799cfbf9c26269652a"
+size = 175
+immutable = true
+note = "copia permanente en ~/HackiOS/evidencias (fuera de git)."

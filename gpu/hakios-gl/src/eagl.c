@@ -58,6 +58,7 @@
  * vblur=2 paints such blurs by their masks instead (see vblur_on), glframes=1 writes a line for
  * every frame (see frame_end()).
  */
+#include <mach/mach.h>
 #include <CoreFoundation/CoreFoundation.h>
 #include <IOKit/IOKitLib.h>
 #include <IOSurface/IOSurfaceRef.h>
@@ -3679,6 +3680,78 @@ my_glGetIntegerv(void *context, GLenum name, GLint *values)
 	EAGL_LEAVE(e, 0x348);
 }
 
+extern kern_return_t mach_vm_region(vm_map_t, mach_vm_address_t *, mach_vm_size_t *, vm_region_flavor_t, vm_region_info_t,
+    mach_msg_type_number_t *, mach_port_t *);
+
+/* How many bytes from `from` on can be read, looking no further than `want`: the mappings that follow one another. */
+static size_t
+readable_bytes(const void *from, size_t want)
+{
+	mach_vm_address_t start = (mach_vm_address_t)(uintptr_t)from, at = start;
+
+	while (at - start < want) {
+		mach_vm_address_t region = at;
+		mach_vm_size_t size = 0;
+		vm_region_basic_info_data_64_t info;
+		mach_msg_type_number_t count = VM_REGION_BASIC_INFO_COUNT_64;
+		mach_port_t object = MACH_PORT_NULL;
+
+		if (mach_vm_region(mach_task_self(), &region, &size, VM_REGION_BASIC_INFO_64, (vm_region_info_t)&info, &count,
+		    &object) != KERN_SUCCESS || region > at || !(info.protection & VM_PROT_READ)) {
+			break;
+		}
+		at = region + size;
+	}
+	return at - start < want ? (size_t)(at - start) : want;
+}
+
+/*
+ * How many whole rows of an upload can be read (height: all of them). CoreAnimation has given pictures that end before
+ * the last rows (backboardd died in Mesa's copy, reading past a read-only mapping: 2026-11-27), so before a large upload
+ * the source is checked as OpenGL ES will walk it, with the unpack state in force.
+ */
+static GLsizei
+readable_rows(GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels)
+{
+	GLint row_length = 0, alignment = 4, skip_rows = 0, skip_pixels = 0;
+	size_t pixel = bytes_a_pixel(format, type);
+	static unsigned said;
+
+	if (pixels == NULL || width <= 0 || height <= 0 || (size_t)width * (size_t)height * pixel < 16384) {
+		return height;
+	}
+	GLint unpack_buffer = 0;
+	glGetIntegerv(0x88ef /* GL_PIXEL_UNPACK_BUFFER_BINDING */, &unpack_buffer);
+	if (unpack_buffer != 0) {
+		return height;          /* "pixels" is an offset in a buffer */
+	}
+	glGetIntegerv(GL_UNPACK_ROW_LENGTH, &row_length);
+	glGetIntegerv(GL_UNPACK_ALIGNMENT, &alignment);
+	glGetIntegerv(0x0cf3 /* GL_UNPACK_SKIP_ROWS */, &skip_rows);
+	glGetIntegerv(0x0cf4 /* GL_UNPACK_SKIP_PIXELS */, &skip_pixels);
+	if (alignment < 1) {
+		alignment = 4;
+	}
+	size_t used = (size_t)width * pixel;
+	size_t stride = ((size_t)(row_length > 0 ? row_length : width) * pixel + (size_t)alignment - 1) / (size_t)alignment *
+	    (size_t)alignment;
+	size_t first = (size_t)skip_rows * stride + (size_t)skip_pixels * pixel;
+	size_t need = first + (size_t)(height - 1) * stride + used;
+	size_t have = readable_bytes(pixels, need);
+
+	if (have >= need) {
+		return height;
+	}
+	GLsizei rows = have < first + used ? 0 : (GLsizei)((have - first - used) / stride) + 1;
+	if (said < 20) {
+		said++;
+		say("hakios-gl: upload past its memory: %dx%d format %#x type %#x row length %d alignment %d skip %d,%d at %p: %zu of "
+		    "%zu bytes readable, %d rows kept\n", width, height, format, type, row_length, alignment, skip_rows, skip_pixels,
+		    pixels, have, need, rows);
+	}
+	return rows;
+}
+
 static void
 my_glTexImage2D(void *context, GLenum target, GLint level, GLint internal, GLsizei width, GLsizei height, GLint border,
     GLenum format, GLenum type, const void *pixels)
@@ -3704,7 +3777,12 @@ my_glTexImage2D(void *context, GLenum target, GLint level, GLint internal, GLsiz
 		group_forget(e, e->bound[e->unit]);
 	}
 	uint64_t began = slow_calls_us != 0 ? now_us() : 0;
-	glTexImage2D(target, level, (GLint)internal_format((GLenum)internal, format), width, height, border, format, type, pixels);
+	GLsizei rows = readable_rows(width, height, format, type, pixels);
+	glTexImage2D(target, level, (GLint)internal_format((GLenum)internal, format), width, height, border, format, type,
+	    rows == height ? pixels : NULL);
+	if (rows > 0 && rows < height) {
+		glTexSubImage2D(target, level, 0, 0, width, rows, format, type, pixels);
+	}
 	if (began != 0 && now_us() - began >= slow_calls_us) {
 		/* (with glslow=US: which pictures take long to hand over) */
 		say("tl: slow-tex %dx%d level %d format %#x type %#x%s %llu at %llu\n", width, height, level, format, type,
